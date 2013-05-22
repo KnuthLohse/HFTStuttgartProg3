@@ -12,10 +12,18 @@
 #include <iostream>
 #include "ConfigurationObj.h"
 #include "ConfigurationObjWrapper.h"
+
 class ServiceProcessor :public ConfigurationObjWrapper
 {
 public:
+    /**
+     * @param conf ConfigurationObject to get the Attributes from
+     */
     ServiceProcessor(ConfigurationObj *conf);
+    
+    /**
+     * returns the Type of the Serviceprocessor
+     */
     std::string getType();
     
 private:

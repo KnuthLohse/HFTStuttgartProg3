@@ -18,8 +18,16 @@ typedef std::vector<TaskProcessor> TaskProcessorV_t;
 class ServiceReader : public ConfigurationReader {
 
 public:
+    /**
+     * @param path Path and filename of the configurationFile to read
+     */
     ServiceReader(std::string path);
-    size_t getTaskProcessors(TaskProcessorV_t *);
+    
+    /**
+     * @param tps OUT Vector of all TaskProcessors
+     * @return Number of TaskProcessors
+     */
+    size_t getTaskProcessors(TaskProcessorV_t * tps);
 };
 
 

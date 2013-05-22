@@ -17,17 +17,25 @@ typedef std::map<std::string, ConfigurationObj*> confObjMap_t;
 class ConfigurationReader
 {
 public:
+    /**
+     * @param filename Path and filename ot the Configurationfile to read
+     */
     ConfigurationReader(std::string filename);
-    ConfigurationObj * getConfigurationObj(std::string key);
+    
     // Read configuration file
     void readFile();
 
+    /**
+     * @param key Name of the Attribute of interrest
+     */
+    ConfigurationObj * getConfigurationObj(std::string key);
+    
+    
 private:
-    std::string mPath;
+    std::string mPath; ///Filename of the Configuration File
 
 protected:
-    confObjMap_t confObjects;
-
+    confObjMap_t confObjects; ///Map of Configuration Objects to store the Attributes in - Key is the name of the attribute
 };
 
 #endif	/* CONFIGURATIONREADER_H */
