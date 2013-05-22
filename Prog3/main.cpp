@@ -7,12 +7,20 @@
 //
 
 #include <iostream>
+#include "ConfigurationReader.h"
+#include "ServiceReader.h"
+#include "TaskProcessor.h"
+
 
 int main(int argc, const char * argv[])
 {
-
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    ServiceReader r("/Users/JoH/etc/System.ini");
+    r.readFile();
+    TaskProcessorV_t tps;
+    size_t numberOfTaskProcs=r.getTaskProcessors(&tps);
+    for (int i=0; i<numberOfTaskProcs; i++) {
+        std::cout << "TP: " << tps[i].getName() << std::endl;
+    }
     return 0;
 }
 
