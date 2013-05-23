@@ -20,6 +20,9 @@ int main(int argc, const char * argv[])
     size_t numberOfTaskProcs=r.getTaskProcessors(&tps);
     for (int i=0; i<numberOfTaskProcs; i++) {
         std::cout << "TP: " << tps[i].getName() << std::endl;
+        bool test=tps[i].supports("eeTypeCServiceType");
+        if (test) std::cout << "Suports Type C" << std::endl;
+        else std::cout << "Doesn't Suports Type C" << std::endl;
     }
     return 0;
 }

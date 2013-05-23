@@ -2,8 +2,9 @@ Configurations that are not in tree form may cause an infinite loop
 example:
 [a:b]
 [b:a]
+Probably not realy of interrest because of the next Issue
 
-Double definition of an ConfigurationObject is not catched and will cause undefined errors
+Double definition of an ConfigurationObject is not catched and will cause undefined errors because the second object will not be written to the map.
 
 Double use of same ServiceProcessor may cause problems and is not catched
 
