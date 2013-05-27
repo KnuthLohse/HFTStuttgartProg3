@@ -14,7 +14,7 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
 
 
 size_t ServiceReader::getTaskProcessors(TaskProcessorV_t * taskProcessors) {
-    ConfigurationObj* root=this->getConfigurationObj("root");
+    ConfigurationObj* root=this->getConfigurationObj("System");
     if (root==NULL) {
         std::cout << "Rootconfiguration Object not found" << std::endl;
         exit(0);

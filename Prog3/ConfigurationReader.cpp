@@ -28,8 +28,8 @@ void ConfigurationReader::readFile()
     //
     string result;
     
-    ConfigurationObj *lastObj=new ConfigurationObj("root");
-    confObjects.insert(std::make_pair("root", lastObj));
+    ConfigurationObj *lastObj=NULL; //=new ConfigurationObj("root");
+    //confObjects.insert(std::make_pair("root", lastObj));
     
     while(std::getline(fileHandler, line))
     {
@@ -63,6 +63,10 @@ void ConfigurationReader::readFile()
         rxSearchReturn = std::regex_search(line.c_str(), rxSearchResults, rxEqual);
         if(rxSearchReturn && !lineDone)
         {
+            if (lastObj==NULL) {
+                std::cout << "Attribute definition before Object Definition" << std::endl;
+                exit(10);
+            }
             //Attributes
             string aName = rxSearchResults[1];
             string aValues=rxSearchResults[2];
