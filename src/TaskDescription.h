@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include "ConfigurationObjWrapper.h"
-#include "TaskDescriptionReader.h"
+#include "ConfigurationReader.h"
 #include "ServiceRequest.h"
 
 typedef std::vector<std::string> stringV_t;
@@ -24,7 +24,7 @@ public:
     /**
      * 
      */
-    TaskDescription(ConfigurationObj *conf, TaskDescriptionReader::TaskDescriptionReader * tReader);
+	TaskDescription(ConfigurationObj *conf, ConfigurationReader * tReader);
     
     stringV_t getNextTasks();
     bool isDone();
@@ -35,5 +35,8 @@ private:
     sRequestsV_t requests;
     
 };
+
+typedef std::vector<TaskDescription> TaskDescriptionV_t;
+
 
 #endif /* defined(__Prog3__TaskDesription__) */

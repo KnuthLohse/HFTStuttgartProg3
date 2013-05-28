@@ -13,8 +13,6 @@
 #include "ConfigurationReader.h"
 #include "TaskDescription.h"
 
-typedef std::vector<TaskDescription> TaskDescriptionV_t;
-
 class TaskDescriptionReader : public ConfigurationReader {
     
 public:

@@ -6,18 +6,18 @@
 //  Copyright (c) 2013 Knuth Lohse. All rights reserved.
 //
 
-#include "TaskDescription2.h"
-#include <regex>
+#include "TaskDescription.h"
+#include <boost/regex.hpp>
 
 
-TaskDescription::TaskDescription(ConfigurationObj *conf, TaskDescriptionReader * tReader): ConfigurationObjWrapper(conf) {
+TaskDescription::TaskDescription(ConfigurationObj *conf, ConfigurationReader * tReader): ConfigurationObjWrapper(conf) {
     stringV_t * stepstrings;
     this->getValues("Steps", &stepstrings);
-    std::regex rxAndSep("(.+) & (.+)");
-    std::cmatch rxSearchResults;
+    boost::regex rxAndSep("(.+) & (.+)");
+    boost::cmatch rxSearchResults;
     for (int i=1; i<(stepstrings->size()-1); i++) { // step over O and X
         requests[i-1]=sRequestV_t();
-        while (std::regex_match((*stepstrings)[i].c_str(), rxSearchResults, rxAndSep)) {
+        while (boost::regex_match((*stepstrings)[i].c_str(), rxSearchResults, rxAndSep)) {
                 
             std::string name=rxSearchResults[2];
             (*stepstrings)[i]=rxSearchResults[1];
