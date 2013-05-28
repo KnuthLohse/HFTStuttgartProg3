@@ -23,7 +23,7 @@ void ConfigurationReader::readFile()
     std::regex rxBrackets("\\[(.+)\\]");
     std::regex rxBracketsColon("\\[(.+):(.+)\\]");
     std::regex rxEqual("(.+)=(.*)");
-    std::regex rxCommaSep("(.+),(.+)");
+    std::regex rxCommaSep("(.+)(,|( -> ))(.+)");
     std::regex rxWhitespace("\\s*");
     //
     string result;
@@ -73,7 +73,7 @@ void ConfigurationReader::readFile()
             lastObj->addAttribute(aName);
             while (std::regex_match(aValues.c_str(), rxSearchResults, rxCommaSep)) {
                 
-                string value=rxSearchResults[2];
+                string value=rxSearchResults[4];
                 aValues=rxSearchResults[1];
                 lastObj->addAttributeValue(aName, value);
             }
