@@ -26,7 +26,9 @@ public:
      */
 	Task(ConfigurationObj *conf, ConfigurationReader * tReader);
     
-    stringV_t getNextStep();
+    std::string getName();
+    
+    sRequestV_t * getNextStep();
     bool isDone();
     
 private:

@@ -48,3 +48,42 @@ Task::Task(ConfigurationObj *conf, ConfigurationReader * tReader): Configuration
         }
     }
 }
+
+std::string Task::getName() {
+    stringV_t * values;
+    size_t size=this->getValues("Name", &values);
+    if (size<1 || values==NULL) {
+        std::cout  << "Name of task not defined" << std::endl;
+        exit(0);
+    }
+    if (size>1) {
+        std::cout  << "Task has more than one name" << std::endl;
+        exit(0);
+    }
+    return (*values)[0];
+}
+
+sRequestV_t * Task::getNextStep() {
+    //Check if we have done evereything;
+    if (this->position>=this->requests.size()) {
+        return NULL;
+    }
+    //Check if this step is allready done
+    int done=1;
+    for (int i=0; i<this->requests[this->position].size(); i++) {
+        if (!this->requests[this->position][i].isDone()) {
+            done=0;
+        }
+    }
+    //if this step is done return the next step
+    if (done) {
+        this->position++;
+        return this->getNextStep();
+    }
+    return &(this->requests[this->position]);
+}
+
+bool Task::isDone() {
+    if (this->getNextStep()==NULL) return true;
+    return false;
+}

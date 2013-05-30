@@ -9,6 +9,9 @@
 #include "ServiceRequest.h"
 
 ServiceRequest::ServiceRequest(ConfigurationObj * conf): ConfigurationObjWrapper(conf) {
-    
-    
+    this->done=false;
+}
+
+int ServiceRequest::getDuration() {
+    return this->getIntValue("Duration.sec");
 }

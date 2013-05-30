@@ -28,6 +28,15 @@ public:
     size_t getValues(const std::string key, stringV_t ** values);
     
     /**
+     * returns the integer value for the attribute identified by key
+     * Will exit if an error occours
+     *
+     * @param key Name of the Attribute
+     * @return Value of the Attribute
+     */
+    int getIntValue(const std::string key);
+    
+    /**
      * @return Name of root ConfigurationObject
      */
     std::string getRootName();

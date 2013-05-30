@@ -23,4 +23,20 @@ std::string ConfigurationObjWrapper::getRootName() {
 std::string ConfigurationObjWrapper::getName() {
     return this->conf->getName();
 }
-    
+
+int ConfigurationObjWrapper::getIntValue(const std::string key) {
+    stringV_t * values;
+    size_t size=this->getValues(key, &values);
+    if (size<1 || values==NULL) {
+        std::cout  << key <<" of " << this->getName() << " not defined" << std::endl;
+        exit(0);
+    }
+    if (size>1) {
+        std::cout  << key <<" of " << this->getName() << " seems to have more than one Value" << std::endl;
+        exit(0);
+    }
+    std::stringstream sstr(*(std::string*)values);
+    int ret;
+    sstr >> ret;
+    return ret;
+}

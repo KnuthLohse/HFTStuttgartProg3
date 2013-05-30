@@ -10,7 +10,7 @@
 #include "ConfigurationReader.h"
 #include "ServiceReader.h"
 #include "TaskProcessor.h"
-
+#include "Task.h"
 
 int main(int argc, const char * argv[])
 {
@@ -23,6 +23,13 @@ int main(int argc, const char * argv[])
         if (test) std::cout << "Suports Type C" << std::endl;
         else std::cout << "Doesn't Suports Type C" << std::endl;
     }
+    TaskV_t * tasks;
+    size_t numberOfTasks=r.getTasks(&tasks);
+    for (int i=0; i<numberOfTasks; i++) {
+        std::cout << (*tasks)[i].getName() << std::endl;
+        
+    }
+    
     return 0;
 }
 

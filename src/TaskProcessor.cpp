@@ -39,18 +39,5 @@ bool TaskProcessor::supports(std::string type) {
 }
 
 int TaskProcessor::getQueueSize() {
-    stringV_t * values;
-    size_t size=this->getValues("Queue.Size", &values);
-    if (size<1 || values==NULL) {
-        std::cout  << "Queue.Size of Task Processor " << this->getName() << " not defined" << std::endl;
-        exit(0);
-    }
-    if (size>1) {
-        std::cout  << "Queue.Size of Task Processor " << this->getName() << " has more than one Value" << std::endl;
-        exit(0);
-    }
-    std::stringstream sstr(*(std::string*)values);
-    int ret;
-    sstr >> ret;
-    return ret;
+    return this->getIntValue("Queue.Size");
 }
