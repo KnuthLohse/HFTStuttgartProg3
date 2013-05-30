@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include "ConfigurationReader.h"
-#include "TaskDescription.h"
+#include "Task.h"
 
 class TaskDescriptionReader : public ConfigurationReader {
     
@@ -25,6 +25,6 @@ public:
      * @param tps OUT Vector of all TaskProcessors
      * @return Number of TaskProcessors
      */
-    size_t getTaskDescriptions(TaskDescriptionV_t * tds);
+    size_t getTasks(TaskV_t * tds);
 };
 #endif /* defined(__Prog3__TaskDescriptionReader__) */

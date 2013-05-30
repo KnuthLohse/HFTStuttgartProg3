@@ -6,12 +6,13 @@
 //  Copyright (c) 2013 Knuth Lohse. All rights reserved.
 //
 
-#include "TaskDescription.h"
+#include "Task.h"
 #include <boost/regex.hpp>
 
 
-TaskDescription::TaskDescription(ConfigurationObj *conf, ConfigurationReader * tReader): ConfigurationObjWrapper(conf) {
+Task::Task(ConfigurationObj *conf, ConfigurationReader * tReader): ConfigurationObjWrapper(conf) {
     stringV_t * stepstrings;
+    this->position=0;
     this->getValues("Steps", &stepstrings);
     boost::regex rxAndSep("(.+) & (.+)");
     boost::cmatch rxSearchResults;

@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Knuth Lohse. All rights reserved.
 //
 
-#ifndef __Prog3__TaskDesription__
-#define __Prog3__TaskDesription__
+#ifndef __Prog3__Task__
+#define __Prog3__Task__
 
 #include <iostream>
 #include "ConfigurationObjWrapper.h"
@@ -18,15 +18,15 @@ typedef std::vector<std::string> stringV_t;
 typedef std::vector<ServiceRequest> sRequestV_t;
 typedef std::vector<sRequestV_t> sRequestsV_t;
 
-class TaskDescription : public ConfigurationObjWrapper {
+class Task : public ConfigurationObjWrapper {
     
 public:
     /**
      * 
      */
-	TaskDescription(ConfigurationObj *conf, ConfigurationReader * tReader);
+	Task(ConfigurationObj *conf, ConfigurationReader * tReader);
     
-    stringV_t getNextTasks();
+    stringV_t getNextStep();
     bool isDone();
     
 private:
@@ -36,7 +36,7 @@ private:
     
 };
 
-typedef std::vector<TaskDescription> TaskDescriptionV_t;
+typedef std::vector<Task> TaskV_t;
 
 
-#endif /* defined(__Prog3__TaskDesription__) */
+#endif /* defined(__Prog3__Task__) */

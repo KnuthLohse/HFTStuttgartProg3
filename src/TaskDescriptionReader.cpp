@@ -13,7 +13,7 @@ TaskDescriptionReader::TaskDescriptionReader(std::string path):ConfigurationRead
 }
 
 
-size_t TaskDescriptionReader::getTaskDescriptions(TaskDescriptionV_t * taskDescriptions) {
+size_t TaskDescriptionReader::getTasks(TaskV_t * tasks) {
     ConfigurationObj* root=this->getConfigurationObj("Tasks");
     if (root==NULL) {
         std::cout << "Rootconfiguration Object not found" << std::endl;
@@ -32,7 +32,7 @@ size_t TaskDescriptionReader::getTaskDescriptions(TaskDescriptionV_t * taskDescr
             std::cout  << "Definition of TaskProcessors " << (*values)[i] << " not found" << std::endl;
             exit(0);
         }
-        taskDescriptions->push_back(TaskDescription(tpCObj, this));
+        tasks->push_back(Task(tpCObj, this));
     }
     return size;
 }
