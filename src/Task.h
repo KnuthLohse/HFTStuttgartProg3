@@ -10,11 +10,11 @@
 #define __Prog3__Task__
 
 #include <iostream>
-#include "ServiceReader.h"
 #include "ConfigurationObjWrapper.h"
 #include "ConfigurationReader.h"
 #include "ServiceRequest.h"
 
+class ServiceReader;
 
 typedef std::vector<std::string> stringV_t;
 typedef std::vector<ServiceRequest> sRequestV_t;

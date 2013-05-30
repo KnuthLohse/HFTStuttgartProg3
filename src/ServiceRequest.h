@@ -11,11 +11,10 @@
 
 #include <iostream>
 #include "ConfigurationObjWrapper.h"
-#include "ServiceReader.h"
 #include "ConfigurationObj.h"
 
 
-
+class ServiceReader;
  
 class ServiceRequest : public ConfigurationObjWrapper
 {

@@ -7,6 +7,9 @@
 //
 
 #include "ServiceRequest.h"
+#include "TaskProcessor.h"
+#include "ServiceReader.h"
+typedef std::vector<TaskProcessor> TaskProcessorV_t;
 
 ServiceRequest::ServiceRequest(ConfigurationObj * conf): ConfigurationObjWrapper(conf) {
     this->done=false;
