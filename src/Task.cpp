@@ -87,3 +87,14 @@ bool Task::isDone() {
     if (this->getNextStep()==NULL) return true;
     return false;
 }
+
+int Task::validate(ServiceReader * sReader) {
+    for (int i=0; i<this->requests.size(); i++) {
+        for(int j=0; j<this->requests[i].size(); j++) {
+            this->requests[i][j].validate(sReader);
+        }
+    }
+    //TODO implement
+    std::cout << "task::validate not implemented" << std::endl;
+    return 0;
+}

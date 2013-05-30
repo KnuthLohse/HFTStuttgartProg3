@@ -28,6 +28,11 @@ public:
     size_t getValues(const std::string key, stringV_t ** values);
     
     /**
+     * Will exit if Attribute is not defined or has more than one value
+     */
+    std::string getValue(const std::string key);
+    
+    /**
      * returns the integer value for the attribute identified by key
      * Will exit if an error occours
      *

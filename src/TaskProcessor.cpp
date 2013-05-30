@@ -41,3 +41,9 @@ bool TaskProcessor::supports(std::string type) {
 int TaskProcessor::getQueueSize() {
     return this->getIntValue("Queue.Size");
 }
+
+int TaskProcessor::validate() {
+    //TODO implement
+    std::cout << "taskProcessor::validate not implemented" << std::endl;
+    return 0;
+}

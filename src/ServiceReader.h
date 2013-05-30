@@ -38,6 +38,11 @@ public:
     size_t getTasks(TaskV_t ** tasks);
     
 private:
+    /**
+     * Will check the read Object creation and exit on failure
+     */
+    int validate();
+    
     TaskDescriptionReader * tdReader;
     TaskProcessorV_t * taskProcessors;
     TaskV_t * tasks;

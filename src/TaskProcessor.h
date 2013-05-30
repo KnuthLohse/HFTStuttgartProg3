@@ -36,6 +36,8 @@ public:
      */
     int getQueueSize();
     
+    int validate();
+    
 private:
 
     ServiceProcessorV_t serviceProcessors; ///Vector of the serviceProcessors of this TaskProcessor

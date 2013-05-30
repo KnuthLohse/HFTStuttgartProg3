@@ -10,9 +10,11 @@
 #define __Prog3__Task__
 
 #include <iostream>
+#include "ServiceReader.h"
 #include "ConfigurationObjWrapper.h"
 #include "ConfigurationReader.h"
 #include "ServiceRequest.h"
+
 
 typedef std::vector<std::string> stringV_t;
 typedef std::vector<ServiceRequest> sRequestV_t;
@@ -30,6 +32,7 @@ public:
     
     sRequestV_t * getNextStep();
     bool isDone();
+    int validate(ServiceReader * sReader);
     
 private:
     

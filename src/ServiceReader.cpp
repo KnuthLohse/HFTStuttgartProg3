@@ -44,6 +44,10 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
     this->tdReader=new TaskDescriptionReader(taskfile);
     this->tasks=new TaskV_t();
     this->tdReader->getTasks(this->tasks);
+    if (!this->validate()) {
+        std::cout << "Validation of configuration files did fail" << std::endl;
+        exit(42);
+    }
 }
 
 size_t ServiceReader::getTasks(TaskV_t ** tasks) {
@@ -54,4 +58,15 @@ size_t ServiceReader::getTasks(TaskV_t ** tasks) {
 size_t ServiceReader::getTaskProcessors(TaskProcessorV_t ** taskProcessors) {
     (*taskProcessors)=this->taskProcessors;
     return this->taskProcessors->size();
+}
+
+int ServiceReader::validate() {
+    
+    for (int i=0; i<this->tasks->size(); i++) {
+        if (!(*this->tasks)[i].validate(this->taskProcessors)) return 0;
+    }
+    for (int i=0; i<this->taskProcessors->size(); i++) {
+        if (!(*this->taskProcessors)[i].validate()) return 0;
+    }
+    return 1;
 }

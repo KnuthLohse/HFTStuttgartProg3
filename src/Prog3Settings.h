@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Knuth Lohse. All rights reserved.
 //
 
-#ifndef Prog3_Prog3Settings_h
-#define Prog3_Prog3Settings_h
+#ifndef _PROG3_PROG3SETTINGS_H_
+#define _PROG3_PROG3SETTINGS_H_
 
 #define _DEBUG_
 #define _USE_HARDCODED_TASKCONFIG_
@@ -17,10 +17,10 @@
 
 #ifdef _USE_BOOST_REGEX_
     #define _REGEX_PREFIX_ boost
-#endif
+#endif //_USE_BOOST_REGEX_
 
 #ifdef _USE_STD_REGEX_
     #define _REGEX_PREFIX_ std
-#endif
+#endif //_USE_STD_REGEX_
 
-#endif
+#endif //_PROG3_PROG3SETTINGS_H_

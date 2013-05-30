@@ -15,3 +15,23 @@ ServiceRequest::ServiceRequest(ConfigurationObj * conf): ConfigurationObjWrapper
 int ServiceRequest::getDuration() {
     return this->getIntValue("Duration.sec");
 }
+
+bool ServiceRequest::isDone() {
+    return this->done;
+}
+
+int ServiceRequest::validate(ServiceReader * sReader) {
+    this->getDuration(); //will exit if it is not set or it is not a number
+    std::string type=this->getValue("ServiceProcessorType");
+    TaskProcessorV_t * taskProcessors;
+    sReader->getTaskProcessors(&taskProcessors);
+    int supported=0;
+    for (int i=0; i<taskProcessors->size(); i++) {
+        if ((*taskProcessors)[i].supports(type)) supported=1;
+    }
+    if (!supported) {
+        std::cout << "ServiceRequest " << this->getName() << " needs a processor of type " << type <<". Such a processor is not found";
+        exit(3);
+    }
+    return 1;
+}

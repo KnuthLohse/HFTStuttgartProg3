@@ -6,14 +6,16 @@
 //  Copyright (c) 2013 Knuth Lohse. All rights reserved.
 //
 
-#ifndef __Prog3__Task__
-#define __Prog3__Task__
+#ifndef __Prog3__ServiceRequest__
+#define __Prog3__ServiceRequest__
 
 #include <iostream>
 #include "ConfigurationObjWrapper.h"
+#include "ServiceReader.h"
 #include "ConfigurationObj.h"
 
-#endif /* defined(__Prog3__Task__) */
+
+
  
 class ServiceRequest : public ConfigurationObjWrapper
 {
@@ -23,8 +25,12 @@ public:
     int getDuration();
     bool isDone();
     bool setDone();
+    
+    int validate(ServiceReader * sReader);
 private:
     bool done;
 
 
 };
+
+#endif /* defined(__Prog3__Task__) */
