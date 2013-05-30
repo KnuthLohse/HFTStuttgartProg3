@@ -15,12 +15,11 @@
 int main(int argc, const char * argv[])
 {
     ServiceReader r("/Users/JoH/etc/System.ini");
-    r.readFile();
-    TaskProcessorV_t tps;
+    TaskProcessorV_t * tps;
     size_t numberOfTaskProcs=r.getTaskProcessors(&tps);
     for (int i=0; i<numberOfTaskProcs; i++) {
-        std::cout << "TP: " << tps[i].getName() << std::endl;
-        bool test=tps[i].supports("eeTypeCServiceType");
+        std::cout << "TP: " << (*tps)[i].getName() << std::endl;
+        bool test=(*tps)[i].supports("eeTypeCServiceType");
         if (test) std::cout << "Suports Type C" << std::endl;
         else std::cout << "Doesn't Suports Type C" << std::endl;
     }

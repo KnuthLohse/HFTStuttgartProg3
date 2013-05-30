@@ -17,12 +17,17 @@ using std::string;
 ConfigurationReader::ConfigurationReader(string path)
 {
     this->mPath = path;
+    this->readFile();
 }
 
 void ConfigurationReader::readFile()
 {
     // File variables
     std::ifstream fileHandler(this->mPath.c_str());
+    if (fileHandler.fail()) {
+        std::cout << "File " << this->mPath << " could not be opened" << std::endl;
+        exit(10);
+    }
     string line;
     
     // Regex variables

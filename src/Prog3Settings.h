@@ -9,6 +9,9 @@
 #ifndef Prog3_Prog3Settings_h
 #define Prog3_Prog3Settings_h
 
+#define _DEBUG_
+#define _USE_HARDCODED_TASKCONFIG_
+
 //#define _USE_BOOST_REGEX_
 #define _USE_STD_REGEX_
 

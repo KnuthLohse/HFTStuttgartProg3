@@ -22,15 +22,16 @@ public:
      */
     ConfigurationReader(std::string filename);
     
-    // Read configuration file
-    void readFile();
+
 
     /**
      * @param key Name of the Attribute of interrest
      */
     ConfigurationObj * getConfigurationObj(std::string key);
-    
-    
+
+protected:
+    // Read configuration file
+    void readFile();
 private:
     std::string mPath; ///Filename of the Configuration File
 

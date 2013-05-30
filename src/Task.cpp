@@ -26,7 +26,7 @@ Task::Task(ConfigurationObj *conf, ConfigurationReader * tReader): Configuration
     _REGEX_PREFIX_::cmatch rxSearchResults;
     //TODO Check for 0 -> and -> X
     for (int i=1; i<(stepstrings->size()-1); i++) { // step over O and X
-        requests[i-1]=sRequestV_t();
+        this->requests.push_back(sRequestV_t());
         while (_REGEX_PREFIX_::regex_match((*stepstrings)[i].c_str(), rxSearchResults, rxAndSep)) {
                 
             std::string name=rxSearchResults[2];
@@ -36,7 +36,7 @@ Task::Task(ConfigurationObj *conf, ConfigurationReader * tReader): Configuration
                 std::cout << "Could not find Service Request " << name << std::endl;
                 exit(9);
             }
-            requests[i-1].push_back(ServiceRequest(srConf));
+            this->requests[i-1].push_back(ServiceRequest(srConf));
         }
         if ((*stepstrings)[i].length()) {
             ConfigurationObj * srConf=tReader->getConfigurationObj((*stepstrings)[i]);
@@ -44,7 +44,7 @@ Task::Task(ConfigurationObj *conf, ConfigurationReader * tReader): Configuration
                 std::cout << "Could not find Service Request " << (*stepstrings)[i] << std::endl;
                 exit(9);
             }
-            requests[i-1].push_back(ServiceRequest(srConf));
+            this->requests[i-1].push_back(ServiceRequest(srConf));
         }
     }
 }

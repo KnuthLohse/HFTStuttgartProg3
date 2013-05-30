@@ -12,6 +12,8 @@
 #include <iostream>
 #include "ConfigurationReader.h"
 #include "TaskProcessor.h"
+#include "Task.h"
+#include "TaskDescriptionReader.h"
 
 typedef std::vector<TaskProcessor> TaskProcessorV_t;
 
@@ -27,9 +29,18 @@ public:
      * @param tps OUT Vector of all TaskProcessors
      * @return Number of TaskProcessors
      */
-    size_t getTaskProcessors(TaskProcessorV_t * tps);
+    size_t getTaskProcessors(TaskProcessorV_t ** tps);
+    
+    /**
+     * @param tasks OUT list of all Tasks
+     * @return Number of Tasks
+     */
+    size_t getTasks(TaskV_t ** tasks);
     
 private:
+    TaskDescriptionReader * tdReader;
+    TaskProcessorV_t * taskProcessors;
+    TaskV_t * tasks;
 };
 
 

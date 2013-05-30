@@ -7,6 +7,7 @@
 //
 
 #include "TaskDescriptionReader.h"
+#include "Prog3Settings.h"
 
 TaskDescriptionReader::TaskDescriptionReader(std::string path):ConfigurationReader(path) {
     
@@ -16,7 +17,7 @@ TaskDescriptionReader::TaskDescriptionReader(std::string path):ConfigurationRead
 size_t TaskDescriptionReader::getTasks(TaskV_t * tasks) {
     ConfigurationObj* root=this->getConfigurationObj("Tasks");
     if (root==NULL) {
-        std::cout << "Rootconfiguration Object not found" << std::endl;
+        std::cout << "Rootconfiguration of Task ini not found" << std::endl;
         exit(0);
     }
     stringV_t * values;
