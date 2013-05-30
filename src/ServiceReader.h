@@ -28,6 +28,8 @@ public:
      * @return Number of TaskProcessors
      */
     size_t getTaskProcessors(TaskProcessorV_t * tps);
+    
+private:
 };
 
 

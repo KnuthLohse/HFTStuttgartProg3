@@ -7,18 +7,27 @@
 //
 
 #include "Task.h"
-#include <boost/regex.hpp>
+#include "Prog3Settings.h"
+
+
+#ifdef _USE_BOOST_REGEX_
+    #include <boost/regex.hpp>
+#endif
+#ifdef _USE_STD_REGEX_
+    #include <regex>
+#endif
 
 
 Task::Task(ConfigurationObj *conf, ConfigurationReader * tReader): ConfigurationObjWrapper(conf) {
     stringV_t * stepstrings;
     this->position=0;
     this->getValues("Steps", &stepstrings);
-    boost::regex rxAndSep("(.+) & (.+)");
-    boost::cmatch rxSearchResults;
+    _REGEX_PREFIX_::regex rxAndSep("(.+) & (.+)");
+    _REGEX_PREFIX_::cmatch rxSearchResults;
+    //TODO Check for 0 -> and -> X
     for (int i=1; i<(stepstrings->size()-1); i++) { // step over O and X
         requests[i-1]=sRequestV_t();
-        while (boost::regex_match((*stepstrings)[i].c_str(), rxSearchResults, rxAndSep)) {
+        while (_REGEX_PREFIX_::regex_match((*stepstrings)[i].c_str(), rxSearchResults, rxAndSep)) {
                 
             std::string name=rxSearchResults[2];
             (*stepstrings)[i]=rxSearchResults[1];

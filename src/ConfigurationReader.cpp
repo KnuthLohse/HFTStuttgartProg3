@@ -1,9 +1,16 @@
 
 #include "ConfigurationReader.h"
 #include <fstream>
-#include <boost/regex.hpp>
 //#include <regex>
 #include <vector>
+#include "Prog3Settings.h"
+
+#ifdef _USE_BOOST_REGEX_
+#include <boost/regex.hpp>
+#endif
+#ifdef _USE_STD_REGEX_
+#include <regex>
+#endif
 
 using std::string;
 
@@ -19,13 +26,13 @@ void ConfigurationReader::readFile()
     string line;
     
     // Regex variables
-    boost::cmatch rxSearchResults;
+    _REGEX_PREFIX_::cmatch rxSearchResults;
     bool rxSearchReturn = false;
-    boost::regex rxBrackets("\\[(.+)\\]");
-    boost::regex rxBracketsColon("\\[(.+):(.+)\\]");
-    boost::regex rxEqual("(.+)=(.*)");
-    boost::regex rxCommaSep("(.+)(,|( -> ))(.+)");
-    boost::regex rxWhitespace("\\s*");
+    _REGEX_PREFIX_::regex rxBrackets("\\[(.+)\\]");
+    _REGEX_PREFIX_::regex rxBracketsColon("\\[(.+):(.+)\\]");
+    _REGEX_PREFIX_::regex rxEqual("(.+)=(.*)");
+    _REGEX_PREFIX_::regex rxCommaSep("(.+)(,|( -> ))(.+)");
+    _REGEX_PREFIX_::regex rxWhitespace("\\s*");
     //
     string result;
     
@@ -35,7 +42,7 @@ void ConfigurationReader::readFile()
     while(std::getline(fileHandler, line))
     {
         bool lineDone=0;
-        rxSearchReturn = boost::regex_search(line.c_str(), rxSearchResults, rxBracketsColon);
+        rxSearchReturn = _REGEX_PREFIX_::regex_search(line.c_str(), rxSearchResults, rxBracketsColon);
         if(rxSearchReturn && !lineDone)
         {
             //object with parent
@@ -51,7 +58,7 @@ void ConfigurationReader::readFile()
             lineDone=1;
         }
         
-        rxSearchReturn = boost::regex_search(line.c_str(), rxSearchResults, rxBrackets);
+        rxSearchReturn = _REGEX_PREFIX_::regex_search(line.c_str(), rxSearchResults, rxBrackets);
         if(rxSearchReturn && !lineDone)
         {
             //object without parent;
@@ -61,7 +68,7 @@ void ConfigurationReader::readFile()
             lineDone=1;
         }
         
-        rxSearchReturn = boost::regex_search(line.c_str(), rxSearchResults, rxEqual);
+        rxSearchReturn = _REGEX_PREFIX_::regex_search(line.c_str(), rxSearchResults, rxEqual);
         if(rxSearchReturn && !lineDone)
         {
             if (lastObj==NULL) {
@@ -72,7 +79,7 @@ void ConfigurationReader::readFile()
             string aName = rxSearchResults[1];
             string aValues=rxSearchResults[2];
             lastObj->addAttribute(aName);
-            while (boost::regex_match(aValues.c_str(), rxSearchResults, rxCommaSep)) {
+            while (_REGEX_PREFIX_::regex_match(aValues.c_str(), rxSearchResults, rxCommaSep)) {
                 
                 string value=rxSearchResults[4];
                 aValues=rxSearchResults[1];
@@ -83,7 +90,7 @@ void ConfigurationReader::readFile()
             }
             lineDone=1;
         }
-        rxSearchReturn = boost::regex_match(line.c_str(), rxSearchResults, rxWhitespace);
+        rxSearchReturn = _REGEX_PREFIX_::regex_match(line.c_str(), rxSearchResults, rxWhitespace);
         if(rxSearchReturn && !lineDone){
             //ignore Whitespaceline
             lineDone=1;
