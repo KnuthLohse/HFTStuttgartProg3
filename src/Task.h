@@ -13,12 +13,15 @@
 #include "ConfigurationObjWrapper.h"
 #include "ConfigurationReader.h"
 #include "ServiceRequest.h"
+#include "TaskProcessor.h"
 
 class ServiceReader;
+typedef std::vector<TaskProcessor> TaskProcessorV_t;
 
 typedef std::vector<std::string> stringV_t;
 typedef std::vector<ServiceRequest> sRequestV_t;
 typedef std::vector<sRequestV_t> sRequestsV_t;
+typedef std::map<std::string, int> neededProcsM_t;
 
 class Task : public ConfigurationObjWrapper {
     
@@ -33,6 +36,16 @@ public:
     sRequestV_t * getNextStep();
     bool isDone();
     int validate(ServiceReader * sReader);
+    
+    int findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors);
+    
+    neededProcsM_t getNeededProcessors();
+    
+    neededProcsM_t getNeededProcessors(int step);
+    
+    stringV_t getNeededProcessorTypes();
+    
+    stringV_t getNeededProcessorTypes(int step);
     
 private:
     

@@ -8,6 +8,8 @@
 
 #include "Task.h"
 #include "Prog3Settings.h"
+#include "TaskProcessor.h"
+#include "ServiceReader.h"
 
 
 #ifdef _USE_BOOST_REGEX_
@@ -88,13 +90,117 @@ bool Task::isDone() {
     return false;
 }
 
+
+stringV_t Task::getNeededProcessorTypes(int step) {
+    stringV_t ret=stringV_t();
+    for (int i=0; i<this->requests[step].size(); i++) {
+        std::string type=this->requests[step][i].getServiceProcessorType();
+        bool insert=true;
+        for (int j=0; j<ret.size(); j++) {
+            if (ret[j]==type) insert=false;
+        }
+        if (insert) ret.push_back(type);
+    }
+    return ret;
+    
+}
+
+stringV_t Task::getNeededProcessorTypes() {
+    stringV_t ret=stringV_t();
+    for (int i=0; i<this->requests.size(); i++) {
+        stringV_t types=this->getNeededProcessorTypes(i);
+        for (int j=0; j<types.size(); j++) {
+            bool insert=true;
+            for (int k=0; k<ret.size(); k++) {
+                if (ret[k]==types[j]) insert=false;
+            }
+            if (insert) ret.push_back(types[j]);
+        }
+    }
+    return ret;
+}
+
+
+neededProcsM_t Task::getNeededProcessors() {
+    neededProcsM_t ret=neededProcsM_t();
+    stringV_t types=this->getNeededProcessorTypes();
+    for (int i=0; i<this->requests.size(); i++) {
+        neededProcsM_t needs=this->getNeededProcessors(i);
+        for (int j=0; j<types.size(); j++) {
+            neededProcsM_t::iterator possibleInsert = needs.find(types[j]);
+            if (possibleInsert != needs.end()) {
+                neededProcsM_t::iterator retPos = ret.find(types[j]);
+                if (retPos == ret.end()) {
+                    ret.insert(std::make_pair(possibleInsert->first, possibleInsert->second));
+                }
+                else {
+                    if (retPos->second<possibleInsert->second) retPos->second=possibleInsert->second;
+                }
+            }
+        }
+    }
+    return ret;
+}
+
+neededProcsM_t Task::getNeededProcessors(int step) {
+    neededProcsM_t ret=neededProcsM_t();
+    for (int i=0; i<this->requests[step].size(); i++) {
+        std::string name=this->requests[step][i].getServiceProcessorType();
+        neededProcsM_t::iterator pos = ret.find(name);
+        if (pos == ret.end()) {
+            ret.insert(std::make_pair(name,i));
+        }
+        else {
+            pos->second++;
+        }
+    }
+    return ret;
+}
+
+int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors) {
+    //TODO: Check Queue
+    neededProcsM_t pM=this->getNeededProcessors();
+    stringV_t types=getNeededProcessorTypes();
+    int proc=0;
+    for (int i=0; i<types.size() && proc<taskProcessors->size(); i++) {
+        neededProcsM_t::iterator pos = pM.find(types[i]);
+        if (pos==pM.end()) {
+            //Something went wrong;
+            std::cout << "Something wen't wrong while trying to find a matching TaskProcesser" << std::endl;
+            exit(3);
+        }
+        else {
+            if (pos->second>(*taskProcessors)[proc].supports(types[i])) {
+                proc++;
+                i=0;
+            }
+        }
+    }
+    if (proc>taskProcessors->size()) {
+        return -1;
+    }
+    return proc;
+    
+    
+    //TODO: implement
+    return -1;
+}
+
 int Task::validate(ServiceReader * sReader) {
     for (int i=0; i<this->requests.size(); i++) {
         for(int j=0; j<this->requests[i].size(); j++) {
             this->requests[i][j].validate(sReader);
         }
     }
-    //TODO implement
+    TaskProcessorV_t * tps;
+    sReader->getTaskProcessors(&tps);
+    int check=this->findPossibleTaskProcessor(tps);
+    if (check<0) {
+        std::cout << "Couldn't find a TaskProcessor with matching ServiceProcessors for ServiceRequest " << this->getName() << std::endl;
+        exit(1);
+    }
+    //TODO: Check if Check for matching TaskProcessor does work
+    
     std::cout << "task::validate not implemented" << std::endl;
     return 0;
 }

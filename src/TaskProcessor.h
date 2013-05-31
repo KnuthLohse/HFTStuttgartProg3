@@ -27,9 +27,9 @@ public:
     TaskProcessor(ConfigurationObj *conf, ConfigurationReader *reader);
     
     /**
-     * @return True if the Taskprocessor has at least one Serviceprocessor of the given type, else false
+     * @return Number of Serviceprocessor of the given type
      */
-    bool supports(std::string type);
+    int supports(std::string type);
     
     /**
      * @return QueueSize of the TaskProcessor

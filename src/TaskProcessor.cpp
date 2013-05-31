@@ -29,13 +29,14 @@ TaskProcessor::TaskProcessor(ConfigurationObj *conf, ConfigurationReader *reader
 }
 
 
-bool TaskProcessor::supports(std::string type) {
+int TaskProcessor::supports(std::string type) {
+    int ret=0;
     for (int i=0; i<this->serviceProcessors.size(); i++) {
         if (this->serviceProcessors[i].getType()==type) {
-            return true;
+            ret++;
         }
     }
-    return false;
+    return ret;
 }
 
 int TaskProcessor::getQueueSize() {

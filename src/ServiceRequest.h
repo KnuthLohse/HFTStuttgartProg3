@@ -24,7 +24,7 @@ public:
     int getDuration();
     bool isDone();
     bool setDone();
-    
+    std::string getServiceProcessorType();
     int validate(ServiceReader * sReader);
 private:
     bool done;

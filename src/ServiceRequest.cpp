@@ -23,9 +23,13 @@ bool ServiceRequest::isDone() {
     return this->done;
 }
 
+std::string ServiceRequest::getServiceProcessorType() {
+    return this->getValue("ServiceProcessorType");
+}
+
 int ServiceRequest::validate(ServiceReader * sReader) {
     this->getDuration(); //will exit if it is not set or it is not a number
-    std::string type=this->getValue("ServiceProcessorType");
+    std::string type=this->getServiceProcessorType();
     TaskProcessorV_t * taskProcessors;
     sReader->getTaskProcessors(&taskProcessors);
     int supported=0;
