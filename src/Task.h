@@ -27,30 +27,72 @@ class Task : public ConfigurationObjWrapper {
     
 public:
     /**
-     * 
+     * @param conf Configuration of this Taks
+     * @param tReader Taskreader that is creating this Object, to create the ServiceRequests
+     *
      */
 	Task(ConfigurationObj *conf, ConfigurationReader * tReader);
     
+    /**
+     * @return Name of this task
+     */
     std::string getName();
     
+    /**
+     * @return  List of ServiceRequest that need to be executed in the next step
+     *          List of 0 Elements when nothing is to do for now
+     *          Null if Task is finished
+     * 
+     */
     sRequestV_t * getNextStep();
+    
+    /**
+     * @return true if task is done, else false
+     */
     bool isDone();
+    
+    /**
+     * Validates all necessary Settings read from the configurationFile
+     * Will probably exit if it finds an Error
+     *
+     * @param sReader Service reader to check against (e.g. to check if a TaskProcessor exists that is capable of executing this task)
+     * @return 1 if validated without error <=0 if an Error occured
+     */
     int validate(ServiceReader * sReader);
     
+    /**
+     * @param taskProcessors List of all taskProcessors to choose from;
+     * @return index of the first taskProcessor in the list that is capable of executing this Task; -1 if none of the given TaskProcessors is cabapble of executing this Task
+     *
+     */
     int findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors);
     
+    /**
+     * @return Map of processors that are needed to execute this Task - key is the type of Processor, Value the number of processors needed
+     */
     neededProcsM_t getNeededProcessors();
     
+    /**
+     * @param step Step of interrest
+     * @return Map of processors that are needed to execute the given step of this Task - key is the type of Processor, Value the number of processors needed
+     */
     neededProcsM_t getNeededProcessors(int step);
     
+    /**
+     * @return list of processorTypes needed to execute this task; each one is listed only once, even if more than one of a type is needed.
+     */
     stringV_t getNeededProcessorTypes();
     
+    /**
+     * @param step Step of interest
+     * @return list of processorTypes needed to execute this task; each one is listed only once, even if more than one of a type is needed.
+     */
     stringV_t getNeededProcessorTypes(int step);
     
 private:
     
-    int position;
-    sRequestsV_t requests;
+    int position; /// first step that has not finished yet
+    sRequestsV_t requests; ///List of Steps, each Step is a list of ServiceRequests to be handled parallel
     
 };
 

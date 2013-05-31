@@ -26,6 +26,7 @@ public:
 
     /**
      * @param key Name of the Attribute of interrest
+     * @return ConfigurationObject with the given Name
      */
     ConfigurationObj * getConfigurationObj(std::string key);
 

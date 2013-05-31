@@ -36,6 +36,11 @@ public:
      */
     int getQueueSize();
     
+    /**
+     * Validates the values of this TaskProcessor and its members
+     * Might exit if the validation is not successfull
+     * return 1 if everything seems to be allright; >=0 if something went wrong
+     */
     int validate();
     
 private:

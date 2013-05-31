@@ -29,12 +29,14 @@ public:
     
     /**
      * Will exit if Attribute is not defined or has more than one value
+     * @param key Name of the attribute of interrest
+     * @return Value of the attribute
      */
     std::string getValue(const std::string key);
     
     /**
      * returns the integer value for the attribute identified by key
-     * Will exit if an error occours
+     * Will exit if an error occours - e.g. more than one value; no Value; no Integer
      *
      * @param key Name of the Attribute
      * @return Value of the Attribute

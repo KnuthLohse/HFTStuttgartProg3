@@ -22,10 +22,13 @@ public:
     ServiceProcessor(ConfigurationObj *conf);
     
     /**
-     * returns the Type of the Serviceprocessor
+     * @return Type of the Serviceprocessor
      */
     std::string getType();
     
+    /**
+     * Will check if all necessary Attributes are set to valid values and exit or return an value smaller 1 if not;
+     */
     int validate();
     
 private:

@@ -43,9 +43,9 @@ private:
      */
     int validate();
     
-    TaskDescriptionReader * tdReader;
-    TaskProcessorV_t * taskProcessors;
-    TaskV_t * tasks;
+    TaskDescriptionReader * tdReader; ///Reader of the TaskDescription identified in the Service.ini
+    TaskProcessorV_t * taskProcessors; ///Task Processors as declared by the Service.ini
+    TaskV_t * tasks; ///Tasks as declared by the TaskDescriptionFile read by tdReader
 };
 
 
