@@ -180,10 +180,6 @@ int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors) {
         return -1;
     }
     return proc;
-    
-    
-    //TODO: implement
-    return -1;
 }
 
 int Task::validate(ServiceReader * sReader) {
@@ -199,8 +195,6 @@ int Task::validate(ServiceReader * sReader) {
         std::cout << "Couldn't find a TaskProcessor with matching ServiceProcessors for ServiceRequest " << this->getName() << std::endl;
         exit(1);
     }
-    //TODO: Check if Check for matching TaskProcessor does work
-    
-    std::cout << "task::validate not implemented" << std::endl;
-    return 0;
+
+    return 1;
 }
