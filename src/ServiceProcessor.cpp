@@ -16,6 +16,13 @@ ServiceProcessor::ServiceProcessor(ConfigurationObj *conf): ConfigurationObjWrap
     }
 }
 
+int ServiceProcessor::validate() {
+    if (this->getType().length()<1) {
+        std::cout << "Type of ServiceProcessor " << this->getName() << " not set" << std::endl;
+        exit(1);
+    }
+    return 1;
+}
 
 std::string ServiceProcessor::getType() {
     stringV_t * values;

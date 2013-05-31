@@ -58,6 +58,10 @@ void ConfigurationReader::readFile()
                 std::cout << "Configurationobject " << parent << " not defined, but expected by " << name <<std::endl;
                 exit(3);
             }
+            if (this->getConfigurationObj(name)!=NULL) {
+                std::cout << "Double Definition of Object " << name << " in " << this->mPath << std::endl;
+                exit(3);
+            }
             lastObj=new ConfigurationObj(name, parentObj);
             confObjects.insert(std::make_pair(name, lastObj));
             lineDone=1;
@@ -69,6 +73,10 @@ void ConfigurationReader::readFile()
             //object without parent;
             string name = rxSearchResults[1];
             lastObj=new ConfigurationObj(name);
+            if (this->getConfigurationObj(name)!=NULL) {
+                std::cout << "Double Definition of Object " << name << " in " << this->mPath << std::endl;
+                exit(3);
+            }
             confObjects.insert(std::make_pair(name, lastObj));
             lineDone=1;
         }

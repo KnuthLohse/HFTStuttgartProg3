@@ -44,7 +44,11 @@ int TaskProcessor::getQueueSize() {
 }
 
 int TaskProcessor::validate() {
+    int ret=1;
+    this->getQueueSize(); //will exit if Queuesize is not a number
+    for (int i=0; i<this->serviceProcessors.size(); i++) {
+        if (this->serviceProcessors[i].validate()<=0) ret=-1;
+    }
     //TODO implement
-    std::cout << "taskProcessor::validate not implemented" << std::endl;
-    return 0;
+    return ret;
 }

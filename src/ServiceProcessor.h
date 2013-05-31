@@ -26,6 +26,8 @@ public:
      */
     std::string getType();
     
+    int validate();
+    
 private:
 };
 
