@@ -43,6 +43,15 @@ public:
      */
     int validate();
     
+    /**
+     * Assigns an ID to all its ServiceProcessors, starting by startID
+     *
+     * @param ServiceProcessorTypes OUT Pointer to a Vector where the types of the ServiceProcessors are added in order of their ID
+     * @param startID ID that the first ServiceProcessor of this Task should get
+     * @return ID to give to the next ServiceProcessor
+     */
+    int registerServiceProceossors(stringV_t * ServiceProcessorTypes, int startID);
+    
 private:
 
     ServiceProcessorV_t serviceProcessors; ///Vector of the serviceProcessors of this TaskProcessor

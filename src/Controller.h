@@ -9,6 +9,7 @@
 typedef std::pair<int,int> procParamP_t; //first: jobID to return when the job is finished; second: Duration in seconds
 typedef std::vector<int, procParamP_t> procsToStartV_t; //first: Index of Processor; Second Params to start the job
 typedef std::vector<std::string> processorV_t; //List of Processor Type Names to start
+class ServiceReader;
 
 class Controller {
 
@@ -68,6 +69,9 @@ class Controller {
 	 * Probably should Terminate everything, not sure about this.
 	 */
 	int serviceProcessorUnexpectedTerminated(int processorID);
+    
+private:
+    ServiceReader * serviceReader; /// ServiceReader of the System.ini
 };
 
 #endif /* CONTROLLER_H */
