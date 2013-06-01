@@ -12,7 +12,7 @@ typedef std::vector<std::string> processorV_t; //List of Processor Type Names to
 class ServiceReader;
 
 class Controller {
-
+public:
 	/**
 	 * Reads the ini files, and might end the program if there's an error
 	 *
@@ -27,6 +27,8 @@ class Controller {
 	 * @Param filename Name including path of the System.ini
 	 */
 	Controller();
+    
+    ~Controller();
 
 	/**
 	 * Returns an list of the type of Processors needed. For each Listmember there needs to be

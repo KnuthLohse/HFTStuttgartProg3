@@ -52,13 +52,6 @@ int TaskProcessor::validate() {
     return ret;
 }
 
-/**
- * Assigns an ID to all its ServiceProcessors, starting by startID
- *
- * @param ServiceProcessorTypes OUT Pointer to a Vector where the types of the ServiceProcessors are added in order of their ID
- * @param startID ID that the first ServiceProcessor of this Task should get
- * @return ID to give to the next ServiceProcessor
- */
 int TaskProcessor::registerServiceProceossors(stringV_t * serviceProcessorTypes, int startID) {
     for (int i=0; i<this->serviceProcessors.size(); i++) {
         serviceProcessorTypes->push_back((this->serviceProcessors)[i].getType());

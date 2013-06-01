@@ -11,25 +11,35 @@
 #include "ServiceReader.h"
 #include "TaskProcessor.h"
 #include "Task.h"
+#include "Controller.h"
 
 int main(int argc, const char * argv[])
 {
-    ServiceReader r("/Users/JoH/etc/System.ini");
-    TaskProcessorV_t * tps;
-    size_t numberOfTaskProcs=r.getTaskProcessors(&tps);
-    for (int i=0; i<numberOfTaskProcs; i++) {
-        std::cout << "TP: " << (*tps)[i].getName() << std::endl;
-        bool test=(*tps)[i].supports("eeTypeCServiceType");
-        if (test) std::cout << "Suports Type C" << std::endl;
-        else std::cout << "Doesn't Suports Type C" << std::endl;
-    }
-    TaskV_t * tasks;
-    size_t numberOfTasks=r.getTasks(&tasks);
-    for (int i=0; i<numberOfTasks; i++) {
-        std::cout << (*tasks)[i].getName() << std::endl;
-        
+    Controller c=Controller("/Users/JoH/etc/System.ini");
+    processorV_t * serviceProcessorTypes=NULL;
+    c.getServiceProcessors(&serviceProcessorTypes);
+    std::cout << "--- ServiceProcessorList ---" << std::endl;
+    for (int i=0; i< serviceProcessorTypes->size(); i++) {
+        std::cout << (*serviceProcessorTypes)[i] << std::endl;
     }
     
-    return 0;
+//    
+//    ServiceReader r("/Users/JoH/etc/System.ini");
+//    TaskProcessorV_t * tps;
+//    size_t numberOfTaskProcs=r.getTaskProcessors(&tps);
+//    for (int i=0; i<numberOfTaskProcs; i++) {
+//        std::cout << "TP: " << (*tps)[i].getName() << std::endl;
+//        bool test=(*tps)[i].supports("eeTypeCServiceType");
+//        if (test) std::cout << "Suports Type C" << std::endl;
+//        else std::cout << "Doesn't Suports Type C" << std::endl;
+//    }
+//    TaskV_t * tasks;
+//    size_t numberOfTasks=r.getTasks(&tasks);
+//    for (int i=0; i<numberOfTasks; i++) {
+//        std::cout << (*tasks)[i].getName() << std::endl;
+//        
+//    }
+//    
+//    return 0;
 }
 
