@@ -14,6 +14,7 @@ ServiceProcessor::ServiceProcessor(ConfigurationObj *conf): ConfigurationObjWrap
         std::cout << conf->getName() << " seems not to be a TaskProcessor" << std::endl;
         exit(0);
     }
+    this->iD=-1;
 }
 
 int ServiceProcessor::validate() {
@@ -36,4 +37,13 @@ std::string ServiceProcessor::getType() {
         exit(0);
     }
     return (*values)[0];
+}
+
+int ServiceProcessor::setID(int iD) {
+    this->iD=iD;
+    return this->iD;
+}
+
+int ServiceProcessor::getID() {
+    return this->iD;
 }

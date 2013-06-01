@@ -31,7 +31,18 @@ public:
      */
     int validate();
     
+    /**
+     * @return Index of the ServiceProcessor given to roseRT
+     */
+    int getID();
+    
+    /**
+     * @param iD Index of the ServiceProcessor given to roseRT
+     */
+    int setID(int iD);
 private:
+    
+    int iD; /// Index of the ServiceProcessor given to roseRT; -1 if not set yet
 };
 
 #endif /* defined(__Prog3__ServiceProcessor__) */
