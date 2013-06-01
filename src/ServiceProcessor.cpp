@@ -51,6 +51,10 @@ int ServiceProcessor::registerRequest(ServiceRequest * serviceRequest) {
     return -1;
 }
 
+void ServiceProcessor::jobFinished() {
+    this->serviceRequestInProgress->setDone();
+    this->serviceRequestInProgress=NULL;
+}
 
 int ServiceProcessor::setID(int iD) {
     this->iD=iD;

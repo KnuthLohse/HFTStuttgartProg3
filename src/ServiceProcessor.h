@@ -48,9 +48,14 @@ public:
      */
     int registerRequest(ServiceRequest * serviceRequest);
     
+    /**
+     * Marks this Processor as idle and the registered ServiceRequest as done
+     */
+    void jobFinished();
+    
+    
     bool isWorking();
     
-    void setWorking(bool w);
 private:
     
     int iD; /// Index of the ServiceProcessor given to roseRT; -1 if not set yet

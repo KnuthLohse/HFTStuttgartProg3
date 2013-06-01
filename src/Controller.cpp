@@ -77,3 +77,16 @@ int Controller::getNextJobs(procsToStartV_t ** procsToStart) {
     }
     return ret;
 }
+
+/**
+ * Tells the Controller that a single Taskprocessor has finished the job with the given ID
+ * @Param id ID of the job that has finished
+ * @Return true if everything's allright; False if an error occurred
+ */
+int Controller::jobFinished(int jobID) {
+    ServiceRequestIDM_t::iterator pos = this->requestIDMap.find(jobID);
+    if (pos== this->requestIDMap.end()) return -1;
+    ServiceProcessor * serviceProcessor = pos->second;
+    serviceProcessor->jobFinished();
+    return 1;
+}

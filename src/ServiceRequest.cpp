@@ -20,7 +20,14 @@ int ServiceRequest::getDuration() {
 }
 
 bool ServiceRequest::isDone() {
+    
     return this->done;
+}
+
+bool ServiceRequest::setDone() {
+    if (this->done) return false;
+    this->done=true;
+    return true;
 }
 
 std::string ServiceRequest::getServiceProcessorType() {
