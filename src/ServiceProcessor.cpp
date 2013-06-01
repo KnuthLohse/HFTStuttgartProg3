@@ -45,6 +45,7 @@ int ServiceProcessor::registerRequest(ServiceRequest * serviceRequest) {
     if (this->isWorking()) return 0;
     if (this->getType()==serviceRequest->getServiceProcessorType()) {
         this->serviceRequestInProgress=serviceRequest;
+        serviceRequest->setStarted(true);
         return 1;
     }
     return -1;

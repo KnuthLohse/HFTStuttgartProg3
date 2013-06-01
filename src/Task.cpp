@@ -49,6 +49,7 @@ Task::Task(ConfigurationObj *conf, ConfigurationReader * tReader): Configuration
             this->requests[i-1].push_back(ServiceRequest(srConf));
         }
     }
+    this->taskProcessor=NULL;
 }
 
 std::string Task::getName() {
@@ -148,8 +149,37 @@ neededProcsM_t Task::getNeededProcessors(int step) {
 
 int Task::findPossibleTaskProcessorForNextStep(TaskProcessorV_t * taskProcessors, int startProc) {
     this->checkPosition();
+    //check if step is in progress
+    for (int i=0; i<this->requests[this->position].size(); i++) {
+        if (requests[this->position][i].isStarted()) return -2;
+    }
+    //search a taskProcessor that is capable of handling this Task if none is set allready
+    if (this->taskProcessor==NULL) {
+        neededProcsM_t pM=this->getNeededProcessors();
+        for (int i=0; i<taskProcessors->size(); i++) {
+            TaskProcessorV_t tp=TaskProcessorV_t();
+            int tpIndex=(i+startProc)%taskProcessors->size();
+            //not exactly sure if this makes a copy and if yes i'm not sure if this will cause problems
+            tp.push_back((*taskProcessors)[tpIndex]);
+            if (this->findPossibleTaskProcessor(&tp, pM)==0) {
+                this->taskProcessor=&(*taskProcessors)[tpIndex];
+                return tpIndex;
+            }
+        }
+        return -1;
+    }
+    //check if TaskProcessor that handles this Task is in the list; if not return -1
+    int tpIndex=-1;
+    for (int i=0; i<taskProcessors->size(); i++) {
+        if (&((*taskProcessors)[i])==this->taskProcessor) tpIndex=i;
+    }
+    if (tpIndex<0) return -1;
+    //check if registerd TaskProcessor can handle the next step
+    TaskProcessorV_t tp=TaskProcessorV_t();
+    //not exactly sure if this makes a copy and if yes i'm not sure if this will cause problems
+    tp.push_back((*taskProcessors)[tpIndex]);
     neededProcsM_t neededProcessors=getNeededProcessors(this->position);
-    return this->findPossibleTaskProcessor(taskProcessors, neededProcessors, startProc);
+    return this->findPossibleTaskProcessor(&tp, neededProcessors, startProc);
 }
 
 int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors) {

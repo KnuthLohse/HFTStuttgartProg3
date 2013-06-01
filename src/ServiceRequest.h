@@ -52,9 +52,13 @@ public:
      */
     int validate(ServiceReader * sReader);
 
+    bool isStarted();
+    void setStarted(bool s);
+    
 private:
     
     bool done; ///true if job has finished; else false
+    bool started; ///true if the job is started
 
 
 };

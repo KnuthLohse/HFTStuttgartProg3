@@ -62,12 +62,19 @@ public:
     
     /**
      * @param taskProcessors List of all taskProcessors to choose from;
-     * @return index of the first taskProcessor in the list that is capable of executing this Task; -1 if none of the given TaskProcessors is cabapble of executing this Task
+     * @return index of the first taskProcessor in the list that is capable of executing this Task; -1 if none of the given TaskProcessors is cabapble of executing this Task;
      *
      */
     int findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors);
     
-    
+    /**
+     * Will also register the returned TaskProcessor to be the one that handles this Task
+     *
+     * @param taskProcessors List of all taskProcessors to choose from;
+     * @param startProc Processor that should be tested first
+     * @return index of the first taskProcessor in the list that is capable of executing this Task; -1 if none of the given TaskProcessors is cabapble of executing this Task; -2 if the Task has a step that is in progress
+     *
+     */
     int findPossibleTaskProcessorForNextStep(TaskProcessorV_t * taskProcessors, int startProc=0);
     /**
      * @return Map of processors that are needed to execute this Task - key is the type of Processor, Value the number of processors needed
@@ -97,11 +104,19 @@ private:
      */
     void checkPosition();
     
+    
+    /**
+     * @param taskProcessors List of all taskProcessors to choose from;
+     * @param startProc Processor that should be tested first
+     * @param pM Map of ServiceTypes that needs to be existend
+     * @return index of the first taskProcessor in the list that is capable of executing this Task; -1 if none of the given TaskProcessors is cabapble of executing this Task;
+     *
+     */
     int findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors, neededProcsM_t pM, int startProc=0);
     
     int position; /// first step that has not finished yet
     sRequestsV_t requests; ///List of Steps, each Step is a list of ServiceRequests to be handled parallel
-    
+    TaskProcessor * taskProcessor; ///TaskProcessor that handles this task
 };
 
 typedef std::vector<Task> TaskV_t;

@@ -42,3 +42,10 @@ int ServiceRequest::validate(ServiceReader * sReader) {
     }
     return 1;
 }
+
+bool ServiceRequest::isStarted() {
+    return this->started;
+}
+void ServiceRequest::setStarted(bool s) {
+    this->started=s;
+}
