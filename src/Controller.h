@@ -35,7 +35,7 @@ class Controller {
 	 * @Param ProcessorList OUT List of names of processors to start, list is not sorted by type
 	 * @Return Number of members of this list; -1 if an error occurred
 	 */
-	int getTaskProcessors(processorV_t ** processorList);
+	int getServiceProcessors(processorV_t ** processorList);
 
 	/**
 	 * Returns a List of procs with params to start
@@ -67,7 +67,7 @@ class Controller {
 	 * To Call if an processor Terminates Unexpected
 	 * Probably should Terminate everything, not sure about this.
 	 */
-	int taskProcessorUnexpectedTerminated(int processorID);
+	int serviceProcessorUnexpectedTerminated(int processorID);
 };
 
 #endif /* CONTROLLER_H */
