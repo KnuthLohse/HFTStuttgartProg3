@@ -22,7 +22,6 @@ Controller::~Controller() {
     this->requestIDMap=ServiceRequestIDM_t();
 }
 
-
 int Controller::getServiceProcessors(processorV_t ** processorList) {
     if (*processorList == NULL) {
         (*processorList)=new processorV_t();
@@ -61,11 +60,11 @@ int Controller::getNextJobs(procsToStartV_t ** procsToStart) {
                 //processor is the TaskProcessor which will handle the process -> prepare the return
                 ret=1;
                 sRequestV_t * requests=(*tasks)[i].getNextStep();
-                for (int i=0; i<requests->size(); i++) {
+                for (int j=0; j<requests->size(); j++) {
                     //register all Servicerequests
-                    ServiceProcessor * serviceProcessor=(*taskProcessors)[i].registerServiceRequest(&(*requests)[i]);
+                    ServiceProcessor * serviceProcessor=(*taskProcessors)[processor].registerServiceRequest(&(*requests)[j]);
                     int index=serviceProcessor->getID();
-                    procParamP_t param=std::make_pair(this->nextServiceRequestID, (*requests)[i].getDuration());
+                    procParamP_t param=std::make_pair(this->nextServiceRequestID, (*requests)[j].getDuration());
                     (*procsToStart)->push_back(std::make_pair(index, param));
                     //register here
                     this->requestIDMap.insert(std::make_pair(this->nextServiceRequestID, serviceProcessor));
@@ -78,11 +77,6 @@ int Controller::getNextJobs(procsToStartV_t ** procsToStart) {
     return ret;
 }
 
-/**
- * Tells the Controller that a single Taskprocessor has finished the job with the given ID
- * @Param id ID of the job that has finished
- * @Return true if everything's allright; False if an error occurred
- */
 int Controller::jobFinished(int jobID) {
     ServiceRequestIDM_t::iterator pos = this->requestIDMap.find(jobID);
     if (pos== this->requestIDMap.end()) return -1;
