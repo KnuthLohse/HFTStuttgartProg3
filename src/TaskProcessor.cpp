@@ -7,6 +7,7 @@
 //
 
 #include "TaskProcessor.h"
+#include "ServiceRequest.h"
 
 
 TaskProcessor::TaskProcessor(ConfigurationObj *conf, ConfigurationReader *reader): ConfigurationObjWrapper(conf) {
@@ -33,10 +34,21 @@ int TaskProcessor::supports(std::string type) {
     int ret=0;
     for (int i=0; i<this->serviceProcessors.size(); i++) {
         if (this->serviceProcessors[i].getType()==type) {
-            ret++;
+            if (!this->serviceProcessors[i].isWorking()) {
+                ret++;
+            }
         }
     }
     return ret;
+}
+
+ServiceProcessor * TaskProcessor::registerServiceRequest(ServiceRequest * serviceRequest) {
+    for(int i=0; i<this->serviceProcessors.size(); i++) {
+        if (serviceProcessors[i].registerRequest(serviceRequest)>0) {
+            return &serviceProcessors[i];
+        }
+    }
+    return NULL;
 }
 
 int TaskProcessor::getQueueSize() {

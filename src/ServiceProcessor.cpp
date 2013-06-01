@@ -7,6 +7,7 @@
 //
 
 #include "ServiceProcessor.h"
+#include "ServiceRequest.h"
 
 
 ServiceProcessor::ServiceProcessor(ConfigurationObj *conf): ConfigurationObjWrapper(conf) {
@@ -15,6 +16,7 @@ ServiceProcessor::ServiceProcessor(ConfigurationObj *conf): ConfigurationObjWrap
         exit(0);
     }
     this->iD=-1;
+    this->serviceRequestInProgress=NULL;
 }
 
 int ServiceProcessor::validate() {
@@ -39,6 +41,16 @@ std::string ServiceProcessor::getType() {
     return (*values)[0];
 }
 
+int ServiceProcessor::registerRequest(ServiceRequest * serviceRequest) {
+    if (this->isWorking()) return 0;
+    if (this->getType()==serviceRequest->getServiceProcessorType()) {
+        this->serviceRequestInProgress=serviceRequest;
+        return 1;
+    }
+    return -1;
+}
+
+
 int ServiceProcessor::setID(int iD) {
     this->iD=iD;
     return this->iD;
@@ -46,4 +58,9 @@ int ServiceProcessor::setID(int iD) {
 
 int ServiceProcessor::getID() {
     return this->iD;
+}
+
+bool ServiceProcessor::isWorking() {
+    if (this->serviceRequestInProgress==NULL) return false;
+    return true;
 }

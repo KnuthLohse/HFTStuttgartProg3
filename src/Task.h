@@ -67,6 +67,8 @@ public:
      */
     int findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors);
     
+    
+    int findPossibleTaskProcessorForNextStep(TaskProcessorV_t * taskProcessors, int startProc=0);
     /**
      * @return Map of processors that are needed to execute this Task - key is the type of Processor, Value the number of processors needed
      */
@@ -90,6 +92,12 @@ public:
     stringV_t getNeededProcessorTypes(int step);
     
 private:
+    /*
+     * Checks if the aktuall position is finished and if yes increases it to the first position that is not finished or till the task is finished
+     */
+    void checkPosition();
+    
+    int findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors, neededProcsM_t pM, int startProc=0);
     
     int position; /// first step that has not finished yet
     sRequestsV_t requests; ///List of Steps, each Step is a list of ServiceRequests to be handled parallel

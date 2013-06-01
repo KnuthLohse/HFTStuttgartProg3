@@ -66,21 +66,10 @@ std::string Task::getName() {
 }
 
 sRequestV_t * Task::getNextStep() {
+    this->checkPosition();
     //Check if we have done evereything;
     if (this->position>=this->requests.size()) {
         return NULL;
-    }
-    //Check if this step is allready done
-    int done=1;
-    for (int i=0; i<this->requests[this->position].size(); i++) {
-        if (!this->requests[this->position][i].isDone()) {
-            done=0;
-        }
-    }
-    //if this step is done return the next step
-    if (done) {
-        this->position++;
-        return this->getNextStep();
     }
     return &(this->requests[this->position]);
 }
@@ -157,9 +146,18 @@ neededProcsM_t Task::getNeededProcessors(int step) {
     return ret;
 }
 
+int Task::findPossibleTaskProcessorForNextStep(TaskProcessorV_t * taskProcessors, int startProc) {
+    this->checkPosition();
+    neededProcsM_t neededProcessors=getNeededProcessors(this->position);
+    return this->findPossibleTaskProcessor(taskProcessors, neededProcessors, startProc);
+}
+
 int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors) {
-    //TODO: Check Queue
     neededProcsM_t pM=this->getNeededProcessors();
+    return this->findPossibleTaskProcessor(taskProcessors, pM);
+}
+
+int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors, neededProcsM_t pM, int startProc) {
     stringV_t types=getNeededProcessorTypes();
     int proc=0;
     for (int i=0; i<types.size() && proc<taskProcessors->size(); i++) {
@@ -170,7 +168,7 @@ int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors) {
             exit(3);
         }
         else {
-            if (pos->second>(*taskProcessors)[proc].supports(types[i])) {
+            if (pos->second>(*taskProcessors)[(proc+startProc)%taskProcessors->size()].supports(types[i])) {
                 proc++;
                 i=0;
             }
@@ -180,6 +178,25 @@ int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors) {
         return -1;
     }
     return proc;
+}
+
+void Task::checkPosition() {
+    if (this->position>=this->requests.size()) {
+        return;
+    }
+    //Check if this step is allready done
+    int done=1;
+    for (int i=0; i<this->requests[this->position].size(); i++) {
+        if (!this->requests[this->position][i].isDone()) {
+            done=0;
+        }
+    }
+    //if this step is done return the next step
+    if (done) {
+        this->position++;
+        this->checkPosition();
+    }
+    return;
 }
 
 int Task::validate(ServiceReader * sReader) {

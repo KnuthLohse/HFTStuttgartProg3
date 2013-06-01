@@ -12,6 +12,7 @@
 #include <iostream>
 #include "ConfigurationObj.h"
 #include "ConfigurationObjWrapper.h"
+class ServiceRequest;
 
 class ServiceProcessor :public ConfigurationObjWrapper
 {
@@ -40,9 +41,20 @@ public:
      * @param iD Index of the ServiceProcessor given to roseRT
      */
     int setID(int iD);
+    
+    /**
+     * @param serviceRequest serviceRequest to register
+     * @return 1 if registered; -1 if type is not matching; 0 if not idle
+     */
+    int registerRequest(ServiceRequest * serviceRequest);
+    
+    bool isWorking();
+    
+    void setWorking(bool w);
 private:
     
     int iD; /// Index of the ServiceProcessor given to roseRT; -1 if not set yet
+    ServiceRequest * serviceRequestInProgress; //true if it is working
 };
 
 #endif /* defined(__Prog3__ServiceProcessor__) */

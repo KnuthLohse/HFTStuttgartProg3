@@ -14,6 +14,8 @@
 #include "ServiceProcessor.h"
 #include "ConfigurationReader.h"
 #include "ConfigurationObjWrapper.h"
+
+class ServiceRequest;
 typedef std::vector<ServiceProcessor> ServiceProcessorV_t;
 
 
@@ -27,7 +29,7 @@ public:
     TaskProcessor(ConfigurationObj *conf, ConfigurationReader *reader);
     
     /**
-     * @return Number of Serviceprocessor of the given type
+     * @return Number of Serviceprocessor of the given type belonging to this TaskProcessor that are not working right now
      */
     int supports(std::string type);
     
@@ -52,9 +54,17 @@ public:
      */
     int registerServiceProceossors(stringV_t * ServiceProcessorTypes, int startID);
     
+    /**
+     * @param serviceRequest ServiceRequest to assign to a ServiceProcessor
+     * @return ServiceProcessor that will handle the task
+     */
+    ServiceProcessor * registerServiceRequest(ServiceRequest * serviceRequest);
+
+    
 private:
 
     ServiceProcessorV_t serviceProcessors; ///Vector of the serviceProcessors of this TaskProcessor
+
 };
 
 
