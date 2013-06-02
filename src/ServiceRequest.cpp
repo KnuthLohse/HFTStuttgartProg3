@@ -13,6 +13,7 @@ typedef std::vector<TaskProcessor> TaskProcessorV_t;
 
 ServiceRequest::ServiceRequest(ConfigurationObj * conf): ConfigurationObjWrapper(conf) {
     this->done=false;
+    this->started=false;
 }
 
 int ServiceRequest::getDuration() {
@@ -53,6 +54,7 @@ int ServiceRequest::validate(ServiceReader * sReader) {
 bool ServiceRequest::isStarted() {
     return this->started;
 }
+
 void ServiceRequest::setStarted(bool s) {
     this->started=s;
 }

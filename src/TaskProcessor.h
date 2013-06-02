@@ -14,10 +14,11 @@
 #include "ServiceProcessor.h"
 #include "ConfigurationReader.h"
 #include "ConfigurationObjWrapper.h"
+#include "Controller.h"
 
 class ServiceRequest;
 typedef std::vector<ServiceProcessor> ServiceProcessorV_t;
-
+typedef std::map<std::string, int> neededProcsM_t;
 
 class TaskProcessor : public ConfigurationObjWrapper
 {
@@ -60,7 +61,11 @@ public:
      */
     ServiceProcessor * registerServiceRequest(ServiceRequest * serviceRequest);
 
-    
+    /**
+     * @param Map of free processors needed
+     * @return true if at least the given number of processors are idle; false else
+     */
+    bool canHandleProcs(neededProcsM_t procsToTest);
 private:
 
     ServiceProcessorV_t serviceProcessors; ///Vector of the serviceProcessors of this TaskProcessor

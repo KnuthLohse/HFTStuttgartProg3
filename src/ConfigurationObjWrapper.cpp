@@ -24,6 +24,10 @@ std::string ConfigurationObjWrapper::getName() {
     return this->conf->getName();
 }
 
+ConfigurationObj * ConfigurationObjWrapper::getConfRef() {
+    return this->conf;
+}
+
 std::string ConfigurationObjWrapper::getValue(const std::string key) {
     stringV_t * values;
     size_t size=this->getValues(key, &values);

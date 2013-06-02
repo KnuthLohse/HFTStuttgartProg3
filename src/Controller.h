@@ -76,6 +76,8 @@ public:
 	 */
 	int serviceProcessorUnexpectedTerminated(int processorID);
     
+    void debug();
+    
 private:
     ServiceReader * serviceReader; /// ServiceReader of the System.ini
     int nextServiceRequestID; ///ID of the next Job to start

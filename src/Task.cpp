@@ -10,6 +10,7 @@
 #include "Prog3Settings.h"
 #include "TaskProcessor.h"
 #include "ServiceReader.h"
+#include "TaskDescriptionReader.h"
 
 
 #ifdef _USE_BOOST_REGEX_
@@ -20,8 +21,8 @@
 #endif
 
 
-Task::Task(ConfigurationObj *conf, ConfigurationReader * tReader): ConfigurationObjWrapper(conf) {
-    stringV_t * stepstrings;
+Task::Task(ConfigurationObj *conf, TaskDescriptionReader * tReader): ConfigurationObjWrapper(conf) {
+    stringV_t * stepstrings=NULL;
     this->position=0;
     this->getValues("Steps", &stepstrings);
     _REGEX_PREFIX_::regex rxAndSep("(.+) & (.+)");
@@ -38,7 +39,7 @@ Task::Task(ConfigurationObj *conf, ConfigurationReader * tReader): Configuration
                 std::cout << "Could not find Service Request " << name << std::endl;
                 exit(9);
             }
-            this->requests[i-1].push_back(ServiceRequest(srConf));
+            this->requests[i-1].push_back(new ServiceRequest(srConf));
         }
         if ((*stepstrings)[i].length()) {
             ConfigurationObj * srConf=tReader->getConfigurationObj((*stepstrings)[i]);
@@ -46,13 +47,40 @@ Task::Task(ConfigurationObj *conf, ConfigurationReader * tReader): Configuration
                 std::cout << "Could not find Service Request " << (*stepstrings)[i] << std::endl;
                 exit(9);
             }
-            this->requests[i-1].push_back(ServiceRequest(srConf));
+            this->requests[i-1].push_back(new ServiceRequest(srConf));
         }
     }
     this->taskProcessor=NULL;
 }
 
-std::string Task::getName() {
+Task::~Task() {
+    for (int i=0; i<this->requests.size(); i++) {
+        for (int j=0; j<this->requests[i].size(); j++) {
+            delete this->requests[i][j];
+        }
+    }
+}
+
+Task::Task(Task &other): ConfigurationObjWrapper(other.getConfRef()) {
+    std::cout << "Don't try to copy a task" << std::endl;
+    exit(10);
+}
+
+//std::string Task::getName() {
+//    stringV_t * values;
+//    size_t size=this->getValues("Name", &values);
+//    if (size<1 || values==NULL) {
+//        std::cout  << "Name of task not defined" << std::endl;
+//        exit(0);
+//    }
+//    if (size>1) {
+//        std::cout  << "Task has more than one name" << std::endl;
+//        exit(0);
+//    }
+//    return (*values)[0];
+//}
+
+std::string Task::getNameAttribute() {
     stringV_t * values;
     size_t size=this->getValues("Name", &values);
     if (size<1 || values==NULL) {
@@ -84,7 +112,7 @@ bool Task::isDone() {
 stringV_t Task::getNeededProcessorTypes(int step) {
     stringV_t ret=stringV_t();
     for (int i=0; i<this->requests[step].size(); i++) {
-        std::string type=this->requests[step][i].getServiceProcessorType();
+        std::string type=this->requests[step][i]->getServiceProcessorType();
         bool insert=true;
         for (int j=0; j<ret.size(); j++) {
             if (ret[j]==type) insert=false;
@@ -135,7 +163,7 @@ neededProcsM_t Task::getNeededProcessors() {
 neededProcsM_t Task::getNeededProcessors(int step) {
     neededProcsM_t ret=neededProcsM_t();
     for (int i=0; i<this->requests[step].size(); i++) {
-        std::string name=this->requests[step][i].getServiceProcessorType();
+        std::string name=this->requests[step][i]->getServiceProcessorType();
         neededProcsM_t::iterator pos = ret.find(name);
         if (pos == ret.end()) {
             ret.insert(std::make_pair(name,1));
@@ -153,14 +181,12 @@ int Task::findPossibleTaskProcessorForNextStep(TaskProcessorV_t * taskProcessors
     if (this->stepInProgress()) return -2;
     //search a taskProcessor that is capable of handling this Task if none is set allready
     if (this->taskProcessor==NULL) {
+        //Not very intelligent since it tests if the maximum of each processorType is idle now
         neededProcsM_t pM=this->getNeededProcessors();
         for (int i=0; i<taskProcessors->size(); i++) {
-            TaskProcessorV_t tp=TaskProcessorV_t();
             int tpIndex=(i+startProc)%taskProcessors->size();
-            //not exactly sure if this makes a copy and if yes i'm not sure if this will cause problems
-            tp.push_back((*taskProcessors)[tpIndex]);
-            if (this->findPossibleTaskProcessor(&tp, pM)==0) {
-                this->taskProcessor=&(*taskProcessors)[tpIndex];
+            if ((*taskProcessors)[tpIndex].canHandleProcs(pM)) {
+                this->taskProcessor=&((*taskProcessors)[tpIndex]);
                 return tpIndex;
             }
         }
@@ -173,11 +199,9 @@ int Task::findPossibleTaskProcessorForNextStep(TaskProcessorV_t * taskProcessors
     }
     if (tpIndex<0) return -1;
     //check if registerd TaskProcessor can handle the next step
-    TaskProcessorV_t tp=TaskProcessorV_t();
-    //not exactly sure if this makes a copy and if yes i'm not sure if this will cause problems
-    tp.push_back((*taskProcessors)[tpIndex]);
     neededProcsM_t neededProcessors=getNeededProcessors(this->position);
-    return this->findPossibleTaskProcessor(&tp, neededProcessors, startProc);
+    if ((*taskProcessors)[tpIndex].canHandleProcs(neededProcessors)) return tpIndex;
+    return -1;
 }
 
 int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors) {
@@ -186,21 +210,12 @@ int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors) {
 }
 
 int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors, neededProcsM_t pM, int startProc) {
-    //TODO: Iterate throug vlaues of pM instead of this crapy variant
-    //stringV_t types=getNeededProcessorTypes();
-    int proc=0;
-    //for (int i=0; i<types.size() && proc<taskProcessors->size(); i++) {
-        
-    for(neededProcsM_t::iterator pos = pM.begin(); pos != pM.end() && proc<taskProcessors->size(); ++pos) {
-        if (pos->second>(*taskProcessors)[(proc+startProc)%taskProcessors->size()].supports(pos->first)) {
-            proc++;
-            pos=pM.begin();
+    for (int i=0; i<taskProcessors->size(); i++) {
+        if ((*taskProcessors)[(i+startProc)%taskProcessors->size()].canHandleProcs(pM)) {
+            return (i+startProc)%taskProcessors->size();
         }
     }
-    if (proc>taskProcessors->size()) {
-        return -1;
-    }
-    return proc;
+    return -1;
 }
 
 void Task::checkPosition() {
@@ -210,7 +225,7 @@ void Task::checkPosition() {
     //Check if this step is allready done
     int done=1;
     for (int i=0; i<this->requests[this->position].size(); i++) {
-        if (!this->requests[this->position][i].isDone()) {
+        if (!this->requests[this->position][i]->isDone()) {
             done=0;
         }
     }
@@ -229,7 +244,7 @@ bool Task::stepInProgress() {
     }
     bool inProgress=0;
     for (int i=0; i<this->requests[this->position].size(); i++) {
-        if (this->requests[this->position][i].isStarted()) {
+        if (this->requests[this->position][i]->isStarted()) {
             inProgress=true;
         }
     }
@@ -239,7 +254,7 @@ bool Task::stepInProgress() {
 int Task::validate(ServiceReader * sReader) {
     for (int i=0; i<this->requests.size(); i++) {
         for(int j=0; j<this->requests[i].size(); j++) {
-            this->requests[i][j].validate(sReader);
+            this->requests[i][j]->validate(sReader);
         }
     }
     TaskProcessorV_t * tps;
@@ -251,4 +266,13 @@ int Task::validate(ServiceReader * sReader) {
     }
 
     return 1;
+}
+
+int Task::getNumberOfJobs() {
+    int ret=0;
+    for (int i=0; i<this->requests.size(); i++) {
+        ret+=this->requests[i].size();
+    }
+    std::cout << this->getName() << " has " << ret << "Jobs to do" << std::endl;
+    return ret;
 }

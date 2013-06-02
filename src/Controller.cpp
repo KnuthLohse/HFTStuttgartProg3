@@ -52,28 +52,27 @@ int Controller::getNextJobs(procsToStartV_t ** procsToStart) {
     int ret=-1;
     for (int i=0; i<tasks->size(); i++) {
         //std::cout << "Trying to start task " << i << " " << (*tasks)[i].getName() << std::endl;
-        
-        if (!(*tasks)[i].isDone()) {
+        if (!(*tasks)[i]->isDone()) {
             //std::cout << "Task is not finished yet " << i << " " << (*tasks)[i].getName() << std::endl;
             //Task is not finished jet
             ret=0;
-            if (!(*tasks)[i].stepInProgress()) {
-                //std::cout << "Task is not in progress " << i << " " << (*tasks)[i].getName() << std::endl;
+            if (!(*tasks)[i]->stepInProgress()) {
+                //std::cout << "Task is not in progress " << i << " " << (*tasks)[i]->getName() << std::endl;
                 //Task is idle and can be continued
-                int processor=(*tasks)[i].findPossibleTaskProcessorForNextStep(taskProcessors);
+                int processor=(*tasks)[i]->findPossibleTaskProcessorForNextStep(taskProcessors);
                 if (processor>=0) {
-                    std::cout << "Task is assigned to processor " << i << " " << (*tasks)[i].getName() << std::endl;
+                    //std::cout << "Task is assigned to processor " << i << " " << (*tasks)[i]->getName() << std::endl;
                     //task has found a taskprocessor that can handle its next step
                     //processor is the TaskProcessor which will handle the process -> prepare the return
                     ret=1;
-                    sRequestV_t * requests=(*tasks)[i].getNextStep();
+                    sRequestV_t * requests=(*tasks)[i]->getNextStep();
                     for (int j=0; j<requests->size(); j++) {
                         //register all Servicerequests
-                        ServiceProcessor * serviceProcessor=(*taskProcessors)[processor].registerServiceRequest(&(*requests)[j]);
+                        ServiceProcessor * serviceProcessor=(*taskProcessors)[processor].registerServiceRequest((*requests)[j]);
                         int index=serviceProcessor->getID();
-                        procParamP_t param=std::make_pair(this->nextServiceRequestID, (*requests)[j].getDuration());
+                        procParamP_t param=std::make_pair(this->nextServiceRequestID, (*requests)[j]->getDuration());
                         (*procsToStart)->push_back(std::make_pair(index, param));
-                        //register here
+                        //register in this Object
                         this->requestIDMap.insert(std::make_pair(this->nextServiceRequestID, serviceProcessor));
                         this->nextServiceRequestID++;
                     }
@@ -85,11 +84,24 @@ int Controller::getNextJobs(procsToStartV_t ** procsToStart) {
     }
     return ret;
 }
-
+static int stoped=0;
 int Controller::jobFinished(int jobID) {
+    stoped++;
     ServiceRequestIDM_t::iterator pos = this->requestIDMap.find(jobID);
     if (pos== this->requestIDMap.end()) return -1;
     ServiceProcessor * serviceProcessor = pos->second;
     serviceProcessor->jobFinished();
+    std::cout << "stopped " << stoped << std::endl;
     return 1;
+}
+
+void Controller::debug() {
+    TaskV_t * tasks;
+    serviceReader->getTasks(&tasks);
+    int nOfJobs=0;
+    for (int i=0; i<tasks->size(); i++) {
+        int jobs=(*tasks)[i]->getNumberOfJobs();
+        nOfJobs=nOfJobs+jobs;
+    }
+    std::cout << "Number of Jobs: " << nOfJobs << std::endl;
 }

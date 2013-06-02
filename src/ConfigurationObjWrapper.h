@@ -20,6 +20,8 @@ public:
      */
     ConfigurationObjWrapper(ConfigurationObj * conf);
     
+    ConfigurationObj * getConfRef();
+    
     /**
      * @param key Name of the Attribute to get the values from
      * @param values OUT Will point to the vector with the values of the attribute - Null if Attribute is not defined

@@ -33,7 +33,7 @@ size_t TaskDescriptionReader::getTasks(TaskV_t * tasks) {
             std::cout  << "Definition of TaskProcessors " << (*values)[i] << " not found" << std::endl;
             exit(0);
         }
-        tasks->push_back(Task(tpCObj, this));
+        tasks->push_back(new Task(tpCObj, this));
     }
     return size;
 }

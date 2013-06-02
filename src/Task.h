@@ -16,10 +16,12 @@
 #include "TaskProcessor.h"
 
 class ServiceReader;
+class TaskDescriptionReader;
+
 typedef std::vector<TaskProcessor> TaskProcessorV_t;
 
 typedef std::vector<std::string> stringV_t;
-typedef std::vector<ServiceRequest> sRequestV_t;
+typedef std::vector<ServiceRequest *> sRequestV_t;
 typedef std::vector<sRequestV_t> sRequestsV_t;
 typedef std::map<std::string, int> neededProcsM_t;
 
@@ -31,12 +33,17 @@ public:
      * @param tReader Taskreader that is creating this Object, to create the ServiceRequests
      *
      */
-	Task(ConfigurationObj *conf, ConfigurationReader * tReader);
+	Task(ConfigurationObj *conf, TaskDescriptionReader * tReader);
+    
+    ~Task();
+    
+    Task(Task &other);
     
     /**
      * @return Name of this task
      */
-    std::string getName();
+    std::string getNameAttribute();
+    //std::string getName();
     
     /**
      * @return  List of ServiceRequest that need to be executed in the next step
@@ -103,6 +110,9 @@ public:
      */
     bool stepInProgress();
     
+    //for Debuging purpose
+    int getNumberOfJobs();
+    
 private:
     /*
      * Checks if the aktuall position is finished and if yes increases it to the first position that is not finished or till the task is finished
@@ -124,7 +134,7 @@ private:
     TaskProcessor * taskProcessor; ///TaskProcessor that handles this task
 };
 
-typedef std::vector<Task> TaskV_t;
+typedef std::vector<Task *> TaskV_t;
 
 
 #endif /* defined(__Prog3__Task__) */

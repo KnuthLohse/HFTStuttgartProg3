@@ -63,7 +63,7 @@ size_t ServiceReader::getTaskProcessors(TaskProcessorV_t ** taskProcessors) {
 int ServiceReader::validate() {
     
     for (int i=0; i<this->tasks->size(); i++) {
-        if (!(*this->tasks)[i].validate(this)) return -1;
+        if (!(*this->tasks)[i]->validate(this)) return -1;
     }
     for (int i=0; i<this->taskProcessors->size(); i++) {
         if (!(*this->taskProcessors)[i].validate()) return -1;

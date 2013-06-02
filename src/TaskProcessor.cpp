@@ -42,6 +42,15 @@ int TaskProcessor::supports(std::string type) {
     return ret;
 }
 
+bool TaskProcessor::canHandleProcs(neededProcsM_t procsToTest) {
+    for(neededProcsM_t::iterator pos = procsToTest.begin(); pos != procsToTest.end(); ++pos) {
+        if (pos->second > this->supports(pos->first)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 ServiceProcessor * TaskProcessor::registerServiceRequest(ServiceRequest * serviceRequest) {
     for(int i=0; i<this->serviceProcessors.size(); i++) {
         if (serviceProcessors[i].registerRequest(serviceRequest)>0) {
