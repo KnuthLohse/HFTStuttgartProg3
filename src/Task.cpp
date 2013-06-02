@@ -273,6 +273,6 @@ int Task::getNumberOfJobs() {
     for (int i=0; i<this->requests.size(); i++) {
         ret+=this->requests[i].size();
     }
-    std::cout << this->getName() << " has " << ret << "Jobs to do" << std::endl;
+    //std::cout << this->getName() << " has " << ret << "Jobs to do" << std::endl;
     return ret;
 }

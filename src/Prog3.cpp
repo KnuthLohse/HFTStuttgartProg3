@@ -23,25 +23,13 @@ int main(int argc, const char * argv[])
         std::cout << (*serviceProcessorTypes)[i] << std::endl;
     }
     std::cout << "--- ServiceProcessorList ---" << std::endl;
-    //c.debug();
-
-//    typedef std::pair<int,int> procParamP_t; //first: jobID to return when the job is finished; second: Duration in seconds
-//    typedef std::pair<int, procParamP_t> procIDParamP_t;
-//    typedef std::vector<procIDParamP_t> procsToStartV_t; //first: Index of Processor; Second Params to start the job
-//    typedef std::vector<std::string> processorV_t; //List of Processor Type Names to start
-//    typedef std::map<int, ServiceProcessor *> ServiceRequestIDM_t; /// first: ID of the job; second: serviceProcessor where the ServiceRequest Runs on
     procsToStartV_t * procsToStart;
     procsToStartV_t * procsToStop=new procsToStartV_t();
     bool add=true;
-    int start=0;
     while (add) {
         if (c.getNextJobs(&procsToStart)>0) {
             for (int i=0; i<procsToStart->size(); i++) {
                 std::cout << "started proc with procID " << (*procsToStart)[i].second.first << " on ServiceProcessor " << (*procsToStart)[i].first << std::endl;
-                start++;
-            }
-            if (start>45) {
-                std::cout << "breakpoint" << std::endl;
             }
             procsToStop->insert(procsToStop->end(), procsToStart->begin(), procsToStart->end());
         }
@@ -54,7 +42,5 @@ int main(int argc, const char * argv[])
             else add=false;
         }
     }
-    std::cout << "Started : " << start << std::endl;
-    //c.debug();
 }
 

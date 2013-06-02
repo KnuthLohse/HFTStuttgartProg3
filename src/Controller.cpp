@@ -91,7 +91,7 @@ int Controller::jobFinished(int jobID) {
     if (pos== this->requestIDMap.end()) return -1;
     ServiceProcessor * serviceProcessor = pos->second;
     serviceProcessor->jobFinished();
-    std::cout << "stopped " << stoped << std::endl;
+    //std::cout << "stopped " << stoped << std::endl;
     return 1;
 }
 
