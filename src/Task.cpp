@@ -173,13 +173,17 @@ int Task::findPossibleTaskProcessorForNextStep(TaskProcessorV_t * taskProcessors
     if (this->stepInProgress()) return -2;
     //search a taskProcessor that is capable of handling this Task if none is set allready
     if (this->taskProcessor==NULL) {
-        //Not very intelligent since it tests if the maximum of each processorType is idle now
         neededProcsM_t pM=this->getNeededProcessors();
         for (int i=0; i<taskProcessors->size(); i++) {
+            
             int tpIndex=(i+startProc)%taskProcessors->size();
-            if ((*taskProcessors)[tpIndex].canHandleProcs(pM)) {
-                this->taskProcessor=&((*taskProcessors)[tpIndex]);
-                return tpIndex;
+            if ((*taskProcessors)[tpIndex].canHandleProcsIgnoringIdleStatus(pM)) {
+                //processor is cabale of handling this task, but is it also idle to start this task?
+                neededProcsM_t neededProcessors=getNeededProcessors(this->position);
+                if ((*taskProcessors)[tpIndex].canHandleProcs(neededProcessors)) {
+                    this->taskProcessor=&((*taskProcessors)[tpIndex]);
+                    return tpIndex;
+                }
             }
         }
         return -1;

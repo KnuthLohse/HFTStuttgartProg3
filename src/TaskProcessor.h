@@ -32,7 +32,7 @@ public:
     /**
      * @return Number of Serviceprocessor of the given type belonging to this TaskProcessor that are not working right now
      */
-    int supports(std::string type);
+    int supports(std::string type, bool ignoreIdleStatus=false);
     
     /**
      * @return QueueSize of the TaskProcessor
@@ -66,6 +66,12 @@ public:
      * @return true if at least the given number of processors are idle; false else
      */
     bool canHandleProcs(neededProcsM_t procsToTest);
+    
+    /**
+     * @param Map of free processors needed
+     * @return true if at least the given number of processors are existent; false else
+     */
+    bool canHandleProcsIgnoringIdleStatus(neededProcsM_t procsToTest);
 private:
 
     ServiceProcessorV_t serviceProcessors; ///Vector of the serviceProcessors of this TaskProcessor

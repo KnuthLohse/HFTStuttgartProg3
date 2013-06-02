@@ -30,12 +30,17 @@ TaskProcessor::TaskProcessor(ConfigurationObj *conf, ConfigurationReader *reader
 }
 
 
-int TaskProcessor::supports(std::string type) {
+int TaskProcessor::supports(std::string type, bool ignoreIdleStatus) {
     int ret=0;
     for (int i=0; i<this->serviceProcessors.size(); i++) {
         if (this->serviceProcessors[i].getType()==type) {
-            if (!this->serviceProcessors[i].isWorking()) {
+            if (ignoreIdleStatus) {
                 ret++;
+            }
+            else {
+                if (!this->serviceProcessors[i].isWorking()) {
+                    ret++;
+                }
             }
         }
     }
@@ -45,6 +50,15 @@ int TaskProcessor::supports(std::string type) {
 bool TaskProcessor::canHandleProcs(neededProcsM_t procsToTest) {
     for(neededProcsM_t::iterator pos = procsToTest.begin(); pos != procsToTest.end(); ++pos) {
         if (pos->second > this->supports(pos->first)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool TaskProcessor::canHandleProcsIgnoringIdleStatus(neededProcsM_t procsToTest) {
+    for(neededProcsM_t::iterator pos = procsToTest.begin(); pos != procsToTest.end(); ++pos) {
+        if (pos->second > this->supports(pos->first, 1)) {
             return false;
         }
     }
