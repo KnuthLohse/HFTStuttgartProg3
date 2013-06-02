@@ -22,6 +22,7 @@ int main(int argc, const char * argv[])
     for (int i=0; i< serviceProcessorTypes->size(); i++) {
         std::cout << (*serviceProcessorTypes)[i] << std::endl;
     }
+    std::cout << "--- ServiceProcessorList ---" << std::endl;
     
 //    typedef std::pair<int,int> procParamP_t; //first: jobID to return when the job is finished; second: Duration in seconds
 //    typedef std::pair<int, procParamP_t> procIDParamP_t;
@@ -32,7 +33,7 @@ int main(int argc, const char * argv[])
     procsToStartV_t * procsToStop=new procsToStartV_t();
     bool add=true;
     while (add) {
-        if (c.getNextJobs(&procsToStart)>=0) {
+        if (c.getNextJobs(&procsToStart)>0) {
             for (int i=0; i<procsToStart->size(); i++) {
                 std::cout << "started proc with procID " << (*procsToStart)[i].second.first << " on ServiceProcessor " << (*procsToStart)[i].first << std::endl;
             }
@@ -40,9 +41,11 @@ int main(int argc, const char * argv[])
         }
         else {
             if (procsToStop->size()>0) {
-                
+//                if ((*procsToStop)[procsToStop->size()-1].second.first==9) {
+//                    std::cout << "Ab hier läufts schief" << std::endl;
+//                }
                 c.jobFinished((*procsToStop)[procsToStop->size()-1].second.first);
-                std::cout << "---- Stoped proc with procID " << (*procsToStart)[procsToStop->size()-1].second.first << " on ServiceProcessor " << (*procsToStart)[procsToStop->size()-1].first << std::endl;
+                std::cout << "---- Stoped proc with procID ---- " << (*procsToStop)[procsToStop->size()-1].second.first << " on ServiceProcessor " << (*procsToStop)[procsToStop->size()-1].first << std::endl;
                 procsToStop->pop_back();
             }
             else add=false;

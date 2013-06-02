@@ -138,7 +138,7 @@ neededProcsM_t Task::getNeededProcessors(int step) {
         std::string name=this->requests[step][i].getServiceProcessorType();
         neededProcsM_t::iterator pos = ret.find(name);
         if (pos == ret.end()) {
-            ret.insert(std::make_pair(name,i));
+            ret.insert(std::make_pair(name,1));
         }
         else {
             pos->second++;
@@ -150,9 +150,7 @@ neededProcsM_t Task::getNeededProcessors(int step) {
 int Task::findPossibleTaskProcessorForNextStep(TaskProcessorV_t * taskProcessors, int startProc) {
     this->checkPosition();
     //check if step is in progress
-    for (int i=0; i<this->requests[this->position].size(); i++) {
-        if (requests[this->position][i].isStarted()) return -2;
-    }
+    if (this->stepInProgress()) return -2;
     //search a taskProcessor that is capable of handling this Task if none is set allready
     if (this->taskProcessor==NULL) {
         neededProcsM_t pM=this->getNeededProcessors();
@@ -188,20 +186,15 @@ int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors) {
 }
 
 int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors, neededProcsM_t pM, int startProc) {
-    stringV_t types=getNeededProcessorTypes();
+    //TODO: Iterate throug vlaues of pM instead of this crapy variant
+    //stringV_t types=getNeededProcessorTypes();
     int proc=0;
-    for (int i=0; i<types.size() && proc<taskProcessors->size(); i++) {
-        neededProcsM_t::iterator pos = pM.find(types[i]);
-        if (pos==pM.end()) {
-            //Something went wrong;
-            std::cout << "Something wen't wrong while trying to find a matching TaskProcesser" << std::endl;
-            exit(3);
-        }
-        else {
-            if (pos->second>(*taskProcessors)[(proc+startProc)%taskProcessors->size()].supports(types[i])) {
-                proc++;
-                i=0;
-            }
+    //for (int i=0; i<types.size() && proc<taskProcessors->size(); i++) {
+        
+    for(neededProcsM_t::iterator pos = pM.begin(); pos != pM.end() && proc<taskProcessors->size(); ++pos) {
+        if (pos->second>(*taskProcessors)[(proc+startProc)%taskProcessors->size()].supports(pos->first)) {
+            proc++;
+            pos=pM.begin();
         }
     }
     if (proc>taskProcessors->size()) {
@@ -227,6 +220,20 @@ void Task::checkPosition() {
         this->checkPosition();
     }
     return;
+}
+
+bool Task::stepInProgress() {
+    this->checkPosition();
+    if (this->position>=this->requests.size()) {
+        return false;
+    }
+    bool inProgress=0;
+    for (int i=0; i<this->requests[this->position].size(); i++) {
+        if (this->requests[this->position][i].isStarted()) {
+            inProgress=true;
+        }
+    }
+    return inProgress;
 }
 
 int Task::validate(ServiceReader * sReader) {

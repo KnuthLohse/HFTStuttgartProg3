@@ -98,6 +98,11 @@ public:
      */
     stringV_t getNeededProcessorTypes(int step);
     
+    /**
+     * @return true if none of the Servicerequests of the actual step are started; false else
+     */
+    bool stepInProgress();
+    
 private:
     /*
      * Checks if the aktuall position is finished and if yes increases it to the first position that is not finished or till the task is finished
