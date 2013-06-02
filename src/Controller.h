@@ -23,8 +23,7 @@ public:
 	 * @Param filename Name including path of the System.ini
 	 */
 	Controller(std::string filename);
-
-
+    
 	/**
 	 * Reads the ini files from a standard location, and might end the program if there's an error
 	 *
@@ -34,6 +33,9 @@ public:
     
     ~Controller();
 
+    Controller(const Controller &toCopy);
+
+    
 	/**
 	 * Returns an list of the type of Processors needed. For each Listmember there needs to be
 	 * started an according Taskprocessor in Rose/RT.

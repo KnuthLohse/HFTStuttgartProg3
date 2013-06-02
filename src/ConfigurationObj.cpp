@@ -22,6 +22,22 @@ ConfigurationObj::ConfigurationObj(std::string name, ConfigurationObj *parent) {
     }
 }
 
+ConfigurationObj::~ConfigurationObj() {
+    //
+    // Bad things might happen when this was not a leaf
+    //
+    // Delete all Attributes in map
+    for(attrMap_t::iterator it = this->confAttributes.begin(); it != this->confAttributes.end(); ++it) {
+        delete it->second;
+    }
+    // Don't delete the parent
+}
+
+ConfigurationObj::ConfigurationObj(ConfigurationObj &copy) {
+    std::cout << "Don't try to copy a ConfigurationObj - Bad thins will happen on deconstruction";
+    exit (10);
+}
+
 ConfigurationAttribute* ConfigurationObj::getConfigurationAttribute(std::string key) {
     attrMap_t::iterator pos = this->confAttributes.find(key);
     if (pos== this->confAttributes.end()) return NULL;

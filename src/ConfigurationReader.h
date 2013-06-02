@@ -22,7 +22,9 @@ public:
      */
     ConfigurationReader(std::string filename);
     
-
+    ~ConfigurationReader();
+    
+    ConfigurationReader(ConfigurationReader &toCopy);
 
     /**
      * @param key Name of the Attribute of interrest

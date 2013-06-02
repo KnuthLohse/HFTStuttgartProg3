@@ -20,6 +20,17 @@ ConfigurationReader::ConfigurationReader(string path)
     this->readFile();
 }
 
+ConfigurationReader::~ConfigurationReader() {
+    for(confObjMap_t::iterator it = this->confObjects.begin(); it != this->confObjects.end(); ++it) {
+        delete it->second;
+    }
+}
+
+ConfigurationReader::ConfigurationReader(ConfigurationReader &toCopy) {
+    std::cout << "Don't try to copy an ConfigurationReader - Bad things might haben on deconstruction";
+    exit(10);
+}
+
 void ConfigurationReader::readFile()
 {
     // File variables
