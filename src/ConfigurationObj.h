@@ -25,6 +25,10 @@ public:
      */
     ConfigurationObj(std::string name);
     
+    ~ConfigurationObj();
+    
+    ConfigurationObj(ConfigurationObj &copy);
+    
     /**
      * @param name Name of the Configuration Object
      * @param parent Pointer to the parent CounterObject to get the Attributes from

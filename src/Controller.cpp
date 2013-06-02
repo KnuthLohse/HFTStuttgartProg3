@@ -22,6 +22,11 @@ Controller::~Controller() {
     this->requestIDMap=ServiceRequestIDM_t();
 }
 
+Controller::Controller(const Controller &toCopy) {
+    std::cout << "Don't try to Copy an Controller - Bad things might happen on deconstruction" << std::endl;
+    exit(10);
+}
+
 int Controller::getServiceProcessors(processorV_t ** processorList) {
     if (*processorList == NULL) {
         (*processorList)=new processorV_t();

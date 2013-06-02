@@ -50,6 +50,22 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
     }
 }
 
+
+ServiceReader::~ServiceReader() {
+    delete this->tdReader;
+    for (int i=0; i<this->tasks->size(); i++) {
+        delete (*(this->tasks))[i];
+    }
+    delete this->tasks;
+    delete this->taskProcessors;
+    //tasks and taskprocessors should be
+}
+
+ServiceReader::ServiceReader(ServiceReader &toCopy):ConfigurationReader("No Copy Of ServiceReader Allowed") {
+    std::cout << "Don't copy a Service Reader - Bad things might happen on deconstruction" << std::endl;
+    exit(10);
+}
+
 size_t ServiceReader::getTasks(TaskV_t ** tasks) {
     (*tasks)=this->tasks;
     return this->tasks->size();

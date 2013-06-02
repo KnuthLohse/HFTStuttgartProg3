@@ -25,6 +25,10 @@ public:
      */
     ServiceReader(std::string path);
     
+    ~ServiceReader();
+    
+    ServiceReader(ServiceReader &toCopy);
+    
     /**
      * @param tps OUT Vector of all TaskProcessors
      * @return Number of TaskProcessors
