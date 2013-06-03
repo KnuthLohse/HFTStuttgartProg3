@@ -7,6 +7,8 @@
 
 Controller::Controller(std::string filename) {
     this->serviceReader=new ServiceReader(filename);
+    this->nextServiceRequestID=0;
+    this->requestIDMap=ServiceRequestIDM_t();
 }
 
 
@@ -18,8 +20,6 @@ Controller::Controller() {
 
 Controller::~Controller() {
     delete this->serviceReader;
-    this->nextServiceRequestID=0;
-    this->requestIDMap=ServiceRequestIDM_t();
 }
 
 Controller::Controller(const Controller &toCopy) {
