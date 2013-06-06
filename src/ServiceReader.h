@@ -44,8 +44,15 @@ public:
 private:
     /**
      * Will check the read Object creation and exit on failure
+     * returns 1 if everythings allright
      */
-    int validate(std::ofstream *logStream);
+    int validateProcessors();
+    
+    /**
+     * Will check the read Object creation and write errors to the logStream
+     * Will delete invalid Tasks
+     */
+    int validateTasks(std::ofstream *logStream);
     
     TaskDescriptionReader * tdReader; ///Reader of the TaskDescription identified in the Service.ini
     TaskProcessorV_t * taskProcessors; ///Task Processors as declared by the Service.ini

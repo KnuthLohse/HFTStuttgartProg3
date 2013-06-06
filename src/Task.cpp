@@ -21,7 +21,6 @@
     #include <regex>
 #endif
 
-
 Task::Task(ConfigurationObj *conf, TaskDescriptionReader * tReader): ConfigurationObjWrapper(conf) {
     stringV_t * stepstrings=NULL;
     this->position=0;

@@ -26,6 +26,7 @@ size_t TaskDescriptionReader::getTasks(TaskV_t * tasks) {
     if (size>0 && values==NULL) {
         throw SemanticParseException("Invalid definiton of TaskProcessors");
     }
+    stringV_t createdTasks=stringV_t();
     for (int i=0; i<size; i++) {
         ConfigurationObj* tpCObj=this->getConfigurationObj((*values)[i]);
         if (tpCObj==NULL) {
@@ -33,11 +34,22 @@ size_t TaskDescriptionReader::getTasks(TaskV_t * tasks) {
             this->errors++;
         }
         else {
-            try {
-                tasks->push_back(new Task(tpCObj, this));
+            bool unique=true;
+            for (int j=0; j<createdTasks.size(); j++) {
+                if (createdTasks[j]==(*values)[i]) unique=false;
             }
-            catch(SemanticParseException &e) {
-                this->errorString << e.getError() << std::endl;
+            if (unique) {
+                try {
+                    tasks->push_back(new Task(tpCObj, this));
+                    createdTasks.push_back((*values)[i]);
+                }
+                catch(SemanticParseException &e) {
+                    this->errorString << e.getError() << std::endl;
+                    this->errors++;
+                }
+            }
+            else {
+                this->errorString << "Task " << (*values)[i] << " tried to start twice - ignoring second call" << std::endl;
                 this->errors++;
             }
         }

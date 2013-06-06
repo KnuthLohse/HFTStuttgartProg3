@@ -37,6 +37,8 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
         }
         this->taskProcessors->push_back(TaskProcessor(tpCObj, this));
     }
+    this->validateProcessors();
+    std::cout << "---------- Service file initialized ----------" << std::endl;
     //Preparing parsing the Task ini
     size=root->getValues("TaskDescription.File.1", &values);
     std::string taskfile=(*values)[0];
@@ -46,7 +48,6 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
     std::cout << "TaskIni " << (*values)[0] << " replaced with hardcoded file " << taskfile << std::endl;
 #endif /*_DEBUG_*/
 #endif /*_USE_HARDCODED_TASKCONFIG_*/
-    
     //Open logfile
     this->logStream=std::ofstream();
     this->logStream.open(path+".log");
@@ -68,7 +69,7 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
     if (this->tdReader->getErrorString(&tdErrorString)) {
         this->logStream << tdErrorString;
     }
-    this->validate(&logStream);
+    this->validateTasks(&logStream);
 }
 
 
@@ -97,13 +98,17 @@ size_t ServiceReader::getTaskProcessors(TaskProcessorV_t ** taskProcessors) {
     return this->taskProcessors->size();
 }
 
-int ServiceReader::validate(std::ofstream *logStream) {
+int ServiceReader::validateProcessors() {
     for (int i=0; i<this->taskProcessors->size(); i++) {
         if (!(*this->taskProcessors)[i].validate()) {
             std::cout << "Validation of TaskProcessors failed" << std::endl;
             exit(10);
         }
     }
+    return 1;
+}
+
+int ServiceReader::validateTasks(std::ofstream *logStream) {
     for (int i=0; i<this->tasks->size(); i++) {
         bool del=false;
         try {
