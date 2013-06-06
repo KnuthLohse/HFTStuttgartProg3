@@ -9,8 +9,8 @@ class ServiceReader;
 class ServiceProcessor;
 
 typedef std::pair<int,int> procParamP_t; //first: jobID to return when the job is finished; second: Duration in seconds
-typedef std::pair<int, procParamP_t> procIDParamP_t;
-typedef std::vector<procIDParamP_t> procsToStartV_t; //first: Index of Processor; Second Params to start the job
+typedef std::pair<int, procParamP_t> procIDParamP_t; //first: Index of Processor; Second Params to start the job
+typedef std::vector<procIDParamP_t> procsToStartV_t;
 typedef std::vector<std::string> processorV_t; //List of Processor Type Names to start
 typedef std::map<int, ServiceProcessor *> ServiceRequestIDM_t; /// first: ID of the job; second: serviceProcessor where the ServiceRequest Runs on
 
@@ -59,6 +59,13 @@ public:
 	 * @Return true if everything's allright; False if an error occurred
 	 */
 	int jobFinished(int jobID);
+    
+    /**
+     * Tells the Controller that a single TaksProcessor has started the job with the given ID
+     * @Param id ID of the job that has finished
+	 * @Return true if everything's allright; False if an error occurred
+     */
+    int jobStarted(int jobID);
 
 	/**
 	 * To Call if something is went wrong on while trying to start the job with the given ID
