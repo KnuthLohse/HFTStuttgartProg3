@@ -73,6 +73,7 @@ public:
      */
     bool canHandleProcsIgnoringIdleStatus(neededProcsM_t procsToTest);
 private:
+    
 
     ServiceProcessorV_t serviceProcessors; ///Vector of the serviceProcessors of this TaskProcessor
 

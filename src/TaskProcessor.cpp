@@ -9,6 +9,7 @@
 #include "TaskProcessor.h"
 #include "ServiceRequest.h"
 
+static stringV_t assignedServiceProcessors=stringV_t();
 
 TaskProcessor::TaskProcessor(ConfigurationObj *conf, ConfigurationReader *reader): ConfigurationObjWrapper(conf) {
     if (conf->getRootName()!="TaskProcessor") {
@@ -29,6 +30,13 @@ TaskProcessor::TaskProcessor(ConfigurationObj *conf, ConfigurationReader *reader
             std::cout << this->getName() << " requires Service Processor " << (*values)[i] << " which seems not to be defined" << std::endl;
             exit(3);
         }
+        for (int j=0; j<assignedServiceProcessors.size(); j++) {
+            if ((*values)[i]==(assignedServiceProcessors)[j]) {
+                std::cout << "Service Processor " << (*values)[i] << " used at least twice" << std::endl;
+                exit(3);                
+            }
+        }
+        assignedServiceProcessors.push_back((*values)[i]);
         (this->serviceProcessors).push_back(ServiceProcessor(spCObj));
     }
 }
