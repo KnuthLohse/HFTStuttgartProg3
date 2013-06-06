@@ -7,6 +7,14 @@
 //
 
 #include "ConfigurationObjWrapper.h"
+#include "Prog3Settings.h"
+
+#ifdef _USE_BOOST_REGEX_
+#include <boost/regex.hpp>
+#endif
+#ifdef _USE_STD_REGEX_
+#include <regex>
+#endif
 
 ConfigurationObjWrapper::ConfigurationObjWrapper(ConfigurationObj * conf) {
     this->conf=conf;
@@ -41,6 +49,33 @@ std::string ConfigurationObjWrapper::getValue(const std::string key) {
     }
     return (*values)[0];
 }
+
+size_t ConfigurationObjWrapper::valueIsSet(const std::string key) {
+    stringV_t * values;
+    size_t size=this->getValues(key, &values);
+    if (size<1 || values==NULL) {
+        return 0;
+    }
+    if ((*values)[0]=="") return 0;
+    return values->size();
+}
+
+
+bool ConfigurationObjWrapper::isIntValue(const std::string key) {
+    static _REGEX_PREFIX_::regex rxDigit("\\d*");
+    stringV_t * values;
+    size_t size=this->getValues(key, &values);
+    if (size<1 || values==NULL) {
+        return false;
+    }
+    if (size>1) {
+        return false;
+    }
+    _REGEX_PREFIX_::cmatch rxSearchResults;
+    if (_REGEX_PREFIX_::regex_match((*values)[0].c_str(), rxSearchResults, rxDigit)) return true;
+    return false;
+}
+
 
 int ConfigurationObjWrapper::getIntValue(const std::string key) {
     stringV_t * values;

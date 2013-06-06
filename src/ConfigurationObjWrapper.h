@@ -44,6 +44,23 @@ public:
      * @return Value of the Attribute
      */
     int getIntValue(const std::string key);
+
+    /**
+     * Will return number of values set for the given attribute
+     * if the attribute is defined but not set it will return 0
+     * if more than one value is existend only the first is checked if it is not ""
+     * @param key Name of the attribute of interrest
+     * @return number of values set
+     */
+    size_t valueIsSet(const std::string key);
+
+    /**
+     * returns true if the value for the attribute is a single integer
+     *
+     * @param key Name of the Attribute
+     * @return true if value is an positive integer
+     */
+    bool isIntValue(const std::string key);
     
     /**
      * @return Name of root ConfigurationObject

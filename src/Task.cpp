@@ -11,6 +11,7 @@
 #include "TaskProcessor.h"
 #include "ServiceReader.h"
 #include "TaskDescriptionReader.h"
+#include "SemanticParseException.h"
 
 
 #ifdef _USE_BOOST_REGEX_
@@ -36,16 +37,14 @@ Task::Task(ConfigurationObj *conf, TaskDescriptionReader * tReader): Configurati
             (*stepstrings)[i]=rxSearchResults[1];
             ConfigurationObj * srConf=tReader->getConfigurationObj(name);
             if (srConf==NULL) {
-                std::cout << "Could not find Service Request " << name << std::endl;
-                exit(9);
+                throw SemanticParseException("Could not find Service Request " + name);
             }
             this->requests[i-1].push_back(new ServiceRequest(srConf));
         }
         if ((*stepstrings)[i].length()) {
             ConfigurationObj * srConf=tReader->getConfigurationObj((*stepstrings)[i]);
             if (srConf==NULL) {
-                std::cout << "Could not find Service Request " << (*stepstrings)[i] << std::endl;
-                exit(9);
+                throw SemanticParseException("Could not find Service Request " + (*stepstrings)[i]);
             }
             this->requests[i-1].push_back(new ServiceRequest(srConf));
         }
@@ -76,12 +75,10 @@ std::string Task::getNameAttribute() {
     stringV_t * values;
     size_t size=this->getValues("Name", &values);
     if (size<1 || values==NULL) {
-        std::cout  << "Name of task not defined" << std::endl;
-        exit(0);
+        throw SemanticParseException("Name of task not defined");
     }
     if (size>1) {
-        std::cout  << "Task has more than one name" << std::endl;
-        exit(0);
+        throw SemanticParseException("Task has more than one name");
     }
     return (*values)[0];
 }
@@ -257,10 +254,11 @@ int Task::validate(ServiceReader * sReader) {
     sReader->getTaskProcessors(&tps);
     int check=this->findPossibleTaskProcessor(tps);
     if (check<0) {
-        std::cout << "Couldn't find a TaskProcessor with matching ServiceProcessors for ServiceRequest " << this->getName() << std::endl;
-        exit(1);
+        throw SemanticParseException("Couldn't find a TaskProcessor with matching ServiceProcessors for ServiceRequest " + this->getName());
     }
-
+    //will raise an error if name is not set;
+    this->getNameAttribute();
+    
     return 1;
 }
 

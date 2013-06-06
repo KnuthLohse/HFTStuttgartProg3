@@ -10,6 +10,7 @@
 #define __Prog3__Task__
 
 #include <iostream>
+#include <fstream>
 #include "ConfigurationObjWrapper.h"
 #include "ConfigurationReader.h"
 #include "ServiceRequest.h"

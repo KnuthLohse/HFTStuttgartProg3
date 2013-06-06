@@ -25,6 +25,10 @@ TaskProcessor::TaskProcessor(ConfigurationObj *conf, ConfigurationReader *reader
     }
     for (int i=0; i<size; i++) {
         ConfigurationObj *spCObj=reader->getConfigurationObj((*values)[i]);
+        if (spCObj==NULL) { 
+            std::cout << this->getName() << " requires Service Processor " << (*values)[i] << " which seems not to be defined" << std::endl;
+            exit(3);
+        }
         (this->serviceProcessors).push_back(ServiceProcessor(spCObj));
     }
 }

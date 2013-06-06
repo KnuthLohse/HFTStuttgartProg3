@@ -8,9 +8,15 @@
 
 #include "ServiceReader.h"
 #include "Prog3Settings.h"
+#include "SemanticParseException.h"
 
 ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
     //this->readFile();
+    if (this->errors) {
+        //Fehler beim einlesen der System.ini
+        std::cout << this->errorString.str();
+        exit(-1);
+    }
     ConfigurationObj* root=this->getConfigurationObj("System");
     if (root==NULL) {
         std::cout << "Rootconfiguration of System.ini not found" << std::endl;
@@ -31,7 +37,7 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
         }
         this->taskProcessors->push_back(TaskProcessor(tpCObj, this));
     }
-    
+    //Preparing parsing the Task ini
     size=root->getValues("TaskDescription.File.1", &values);
     std::string taskfile=(*values)[0];
 #ifdef _USE_HARDCODED_TASKCONFIG_
@@ -41,13 +47,28 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
 #endif /*_DEBUG_*/
 #endif /*_USE_HARDCODED_TASKCONFIG_*/
     
-    this->tdReader=new TaskDescriptionReader(taskfile);
-    this->tasks=new TaskV_t();
-    this->tdReader->getTasks(this->tasks);
-    if (!this->validate()) {
-        std::cout << "Validation of configuration files did fail" << std::endl;
-        exit(42);
+    //Open logfile
+    this->logStream=std::ofstream();
+    this->logStream.open(path+".log");
+    if (!this->logStream.is_open()) {
+        std::cout << "Could not open logfile: " << path+".log" << std::endl;
+        exit(-1);
     }
+    //Read taskfile
+    this->tdReader=new TaskDescriptionReader(taskfile);
+    std::string tdErrorString=std::string();
+    this->tasks=new TaskV_t();
+    try {
+        this->tdReader->getTasks(this->tasks);
+    } catch (SemanticParseException e) {
+        //if we get an error creating the tasks print it to the log file
+        this->logStream << e.getError() << std::endl;
+    }
+    //write taskfileparsingerrors to logfile
+    if (this->tdReader->getErrorString(&tdErrorString)) {
+        this->logStream << tdErrorString;
+    }
+    this->validate(&logStream);
 }
 
 
@@ -76,13 +97,33 @@ size_t ServiceReader::getTaskProcessors(TaskProcessorV_t ** taskProcessors) {
     return this->taskProcessors->size();
 }
 
-int ServiceReader::validate() {
-    
-    for (int i=0; i<this->tasks->size(); i++) {
-        if (!(*this->tasks)[i]->validate(this)) return -1;
-    }
+int ServiceReader::validate(std::ofstream *logStream) {
     for (int i=0; i<this->taskProcessors->size(); i++) {
-        if (!(*this->taskProcessors)[i].validate()) return -1;
+        if (!(*this->taskProcessors)[i].validate()) {
+            std::cout << "Validation of TaskProcessors failed" << std::endl;
+            exit(10);
+        }
+    }
+    for (int i=0; i<this->tasks->size(); i++) {
+        bool del=false;
+        try {
+            if (!(*this->tasks)[i]->validate(this)) {
+                //Ignoring task because of failure of validation
+                (*logStream) << "Unknown Error validating a Task; ignoring it" << std::endl;
+                del=true;
+            }
+        }
+        catch (SemanticParseException &e) {
+            (*logStream) << e.getError() << " - Ignoring Task" << std::endl;
+            del=true;
+        }
+        if (del) {
+            this->tasks->erase(this->tasks->begin()+i);
+            i--;
+        }
+    }
+    if (this->tasks->size()==0) {
+        (*logStream) << "No Tasks found" << std::endl;
     }
     return 1;
 }

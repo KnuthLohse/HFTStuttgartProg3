@@ -10,6 +10,7 @@
 #define __Prog3__ServiceRequest__
 
 #include <iostream>
+#include <fstream>
 #include "ConfigurationObjWrapper.h"
 #include "ConfigurationObj.h"
 

@@ -31,10 +31,20 @@ public:
      * @return ConfigurationObject with the given Name
      */
     ConfigurationObj * getConfigurationObj(std::string key);
-
+    
+    /**
+     *
+     * @param OUT error Error messages
+     * @return number of Errors
+     */
+    int getErrorString(std::string * error);
+    
 protected:
     // Read configuration file
     void readFile();
+    std::ostringstream errorString; //Parsing Errors
+    int errors;// number of errors parsing the file
+    
 private:
     std::string mPath; ///Filename of the Configuration File
 

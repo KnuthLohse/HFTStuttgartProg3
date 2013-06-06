@@ -45,11 +45,12 @@ private:
     /**
      * Will check the read Object creation and exit on failure
      */
-    int validate();
+    int validate(std::ofstream *logStream);
     
     TaskDescriptionReader * tdReader; ///Reader of the TaskDescription identified in the Service.ini
     TaskProcessorV_t * taskProcessors; ///Task Processors as declared by the Service.ini
     TaskV_t * tasks; ///Tasks as declared by the TaskDescriptionFile read by tdReader
+    std::ofstream logStream; //Filestream for loging;
 };
 
 

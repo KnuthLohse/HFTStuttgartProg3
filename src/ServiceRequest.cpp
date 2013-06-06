@@ -6,9 +6,11 @@
 //  Copyright (c) 2013 Knuth Lohse. All rights reserved.
 //
 
+
 #include "ServiceRequest.h"
 #include "TaskProcessor.h"
 #include "ServiceReader.h"
+#include "SemanticParseException.h"
 typedef std::vector<TaskProcessor> TaskProcessorV_t;
 
 ServiceRequest::ServiceRequest(ConfigurationObj * conf): ConfigurationObjWrapper(conf) {
@@ -36,7 +38,12 @@ std::string ServiceRequest::getServiceProcessorType() {
 }
 
 int ServiceRequest::validate(ServiceReader * sReader) {
-    this->getDuration(); //will exit if it is not set or it is not a number
+    if (!this->isIntValue("Duration.sec")) {
+        throw SemanticParseException("Duration of " + this->getName() + " not set correctly");
+    }
+    if (this->valueIsSet("ServiceProcessorType")!=1) {
+        throw SemanticParseException("ServiceProcessorType of " + this->getName() + " not set correctly");
+    }
     std::string type=this->getServiceProcessorType();
     TaskProcessorV_t * taskProcessors;
     sReader->getTaskProcessors(&taskProcessors);
@@ -45,8 +52,7 @@ int ServiceRequest::validate(ServiceReader * sReader) {
         if ((*taskProcessors)[i].supports(type)) supported=1;
     }
     if (!supported) {
-        std::cout << "ServiceRequest " << this->getName() << " needs a processor of type " << type <<". Such a processor is not found";
-        exit(3);
+        throw SemanticParseException("ServiceRequest " + this->getName() + " needs a processor of type " + type + ". Such a processor is not found");
     }
     return 1;
 }

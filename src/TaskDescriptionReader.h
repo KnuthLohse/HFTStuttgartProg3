@@ -10,6 +10,7 @@
 #define __Prog3__TaskDescriptionReader__
 
 #include <iostream>
+#include <fstream>
 #include "ConfigurationReader.h"
 #include "Task.h"
 
@@ -26,5 +27,7 @@ public:
      * @return Number of TaskProcessors
      */
     size_t getTasks(TaskV_t * tds);
+    
+protected:
 };
 #endif /* defined(__Prog3__TaskDescriptionReader__) */
