@@ -92,6 +92,10 @@ int TaskProcessor::getQueueSize() {
 
 int TaskProcessor::validate() {
     int ret=1;
+    if (!this->isIntValue("Queue.Size")) {
+        std::cout << "Queue.Size of " << this->getName() << " is not set correct" << std::endl;
+        exit(10);
+    }
     this->getQueueSize(); //will exit if Queuesize is not a number
     for (int i=0; i<this->serviceProcessors.size(); i++) {
         if (this->serviceProcessors[i].validate()<=0) ret=-1;
