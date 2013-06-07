@@ -203,10 +203,36 @@ int TaskProcessor::jobFinished(int jobID) {
 std::string TaskProcessor::getRunningSRequestString(int jobID) {
     ServiceProcessorIDM_t::iterator pos = this->serviceProcIDMap.find(jobID);
     if (pos==this->serviceProcIDMap.end()) {
-        std::cout << "This Shouldn't happen - Didn't find jobID in TaskProcessor::JobFinished" << std::endl;
+        std::cout << "This Shouldn't happen - Didn't find jobID in TaskProcessor::getRunningSRequestString" << std::endl;
         exit(10);
     }
     ServiceProcessor * serviceProcessor = pos->second;
     return  this->getName() + ":" + serviceProcessor->getRunningSRequestString();
+}
+
+JobsToKillV_t TaskProcessor::unexpectedTermination(int jobID) {
+    JobsToKillV_t ret=JobsToKillV_t();
+    ServiceProcessorIDM_t::iterator tpos = this->serviceProcIDMap.find(jobID);
+    if (tpos==this->serviceProcIDMap.end()) {
+        std::cout << "This Shouldn't happen - Didn't find jobID in TaskProcessor::getRunningJobIDs" << std::endl;
+        exit(10);
+    }
+    Task * task=tpos->second->getRunningTask();
+    task->abort();
+    this->jobFinished(jobID);
+    if (task==NULL) {
+        std::cout << "Didn't find Task of Running Job in TaskProcessor::getRunningJobIDs" << std::endl;
+        exit(10);
+    }
+    for (ServiceProcessorIDM_t::iterator pos = serviceProcIDMap.begin(); pos != serviceProcIDMap.end(); ++pos) {
+        if (pos->second->getRunningTask()!=NULL) {
+            if (pos->second->getRunningTask()==task) ret.push_back(pos->first);
+        }
+        else {
+            std::cout << "this shouldn't happen - didn't found Task to process in serviceProcIDMap in TaskProcessor::getRunningJobIDs";
+            exit(20);
+        }
+    }
+    return ret;
 }
 

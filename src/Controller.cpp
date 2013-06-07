@@ -107,9 +107,7 @@ void Controller::writeJobMap(procsToStartV_t * procsToStart, TaskProcessor * tp)
     this->nextServiceRequestID+=procsToStart->size();
 }
 
-static int stoped=0;
 int Controller::jobFinished(int jobID) {
-    stoped++;
     TaskProcessorIDM_t::iterator pos = this->taskProcIDMap.find(jobID);
     if (pos==this->taskProcIDMap.end()) {
         std::cout << "Exit because job should be removed from Controller::taskProcIDMap but was not found";
@@ -142,16 +140,29 @@ int Controller::jobException(int jobID) {
     return 1;
 }
 
-int Controller::jobUnexpectedTerminated(int jobID) {
+JobsToKillV_t Controller::jobUnexpectedTerminated(int jobID) {
     TaskProcessorIDM_t::iterator pos = this->taskProcIDMap.find(jobID);
     if (pos==this->taskProcIDMap.end()) {
         std::cout << "Exit because job should be in Controller::taskProcIDMap but was not found (JobException)";
         exit(10);
     };
     *(this->serviceReader->getLogStream()) << "SERVICE REQUEST/SERVICE PROCESSOR UNEXPECTED TERMINATED: " << pos->second->getRunningSRequestString(jobID) << std::endl;
-    return 1;
+    TaskProcessor * taskProcessor = pos->second;
+    JobsToKillV_t ret=taskProcessor->unexpectedTermination(jobID);
+    this->taskProcIDMap.erase(pos);
+    return ret;
+    
 }
 
+int Controller::jobAbortConfirmation(int jobID) {
+    TaskProcessorIDM_t::iterator pos = this->taskProcIDMap.find(jobID);
+    if (pos==this->taskProcIDMap.end()) {
+        std::cout << "Exit because job should be removed from Controller::taskProcIDMap but was not found";
+        exit(10);
+    };
+    *(this->serviceReader->getLogStream()) << "Service Request Aborted: " << pos->second->getRunningSRequestString(jobID) << std::endl;
+    return 1;
+}
 
 void Controller::debug() {
     TaskV_t * tasks;

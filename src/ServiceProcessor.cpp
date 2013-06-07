@@ -70,6 +70,11 @@ bool ServiceProcessor::isWorking() {
     return true;
 }
 
+Task * ServiceProcessor::getRunningTask() {
+    if (this->serviceRequestInProgress==NULL) return NULL;
+    return this->serviceRequestInProgress->getTask();
+}
+
 std::string ServiceProcessor::getRunningSRequestString() {
     if (this->serviceRequestInProgress==NULL) return this->getName() + " is idle";
     return this->getName() + " ::-:: " + this->serviceRequestInProgress->toString();

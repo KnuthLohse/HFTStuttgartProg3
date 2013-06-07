@@ -261,5 +261,19 @@ bool Task::inProgress() {
     return true;
 }
 
+void Task::abort() {
+    int start=this->position;
+    if (this->isDone()) return;
+    if (this->inProgress()) start++;
+    for (int i=start; i<this->requests.size(); i++) {
+        for (int j=0; j<this->requests[i].size(); j++) {
+            delete this->requests[i][j];
+        }
+    }
+    while (start<=this->requests.size()) {
+        this->requests.pop_back();
+    }
+}
+
 
 

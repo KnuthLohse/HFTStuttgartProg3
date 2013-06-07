@@ -13,6 +13,7 @@
 #include "ConfigurationObj.h"
 #include "ConfigurationObjWrapper.h"
 class ServiceRequest;
+class Task;
 
 class ServiceProcessor :public ConfigurationObjWrapper
 {
@@ -58,6 +59,10 @@ public:
      */
     std::string getRunningSRequestString();
     
+    /**
+     * @return pointer to the Task that is now in progress - Nullpointer if idle
+     */
+    Task * getRunningTask();
     
     bool isWorking();
     

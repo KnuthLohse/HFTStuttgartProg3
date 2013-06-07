@@ -122,6 +122,12 @@ public:
      */
     bool inProgress();
     
+    /**
+     * removes all Servicerequests of future steps
+     */
+    void abort();
+    
+    
 private:
     /*
      * Checks if the aktuall position is finished and if yes increases it to the first position that is not finished or till the task is finished
@@ -141,6 +147,8 @@ private:
     int position; /// first step that has not finished yet
     sRequestsV_t requests; ///List of Steps, each Step is a list of ServiceRequests to be handled parallel
     TaskProcessor * taskProcessor; ///TaskProcessor that handles this task
+    
+    friend class ServiceRequest;
 };
 
 typedef std::vector<Task *> TaskV_t;

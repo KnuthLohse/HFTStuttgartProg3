@@ -15,7 +15,7 @@ typedef std::vector<procIDParamP_t> procsToStartV_t;
 typedef std::vector<std::string> processorV_t; //List of Processor Type Names to start
 typedef std::map<int, ServiceProcessor *> ServiceProcessorIDM_t; /// first: ID of the job; second: serviceProcessor where the ServiceRequest Runs on
 typedef std::map<int, TaskProcessor *> TaskProcessorIDM_t; /// first: ID of the job; second: serviceProcessor where the ServiceRequest Runs on
-
+typedef std::vector<int> JobsToKillV_t; ///List of JobIDs to kill
 
 class Controller {
 public:
@@ -83,9 +83,17 @@ public:
 
 	/**
 	 * To Call if an processor Terminates Unexpected
-	 * Probably should Terminate everything, not sure about this.
+	 * @param jobID Job that terminated unexpected
+     * @return list of jobIDs that needs to be stopped because of that (confirm stoped jobs with jobAbortConfirmation(int jobID))
 	 */
-	int jobUnexpectedTerminated(int processorID);
+	JobsToKillV_t jobUnexpectedTerminated(int jobID);
+    
+    /**
+     * Tells the Controller that a single TaksProcessor has started the job with the given ID
+     * @Param id ID of the job that has been aborted
+	 * @Return true if everything's allright; False if an error occurred
+     */
+    int jobAbortConfirmation(int jobID);
     
     /**
      * Links the JobIDs with the TaskProcessor in the TaskProcIDMap; increases the nextServiceRequestID

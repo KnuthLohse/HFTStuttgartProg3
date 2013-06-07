@@ -62,6 +62,7 @@ public:
 
     bool isStarted();
     void setStarted(bool s);
+    Task * getTask();
     
 private:
     

@@ -102,6 +102,12 @@ public:
      * @param jobID ID of job of interest
      */
     std::string getRunningSRequestString(int jobID);
+    
+    /**
+     * @param jobID ID of job of interrest
+     * @return Returns a list of jobs of the same task as jobID gives that are also running;
+     */
+    JobsToKillV_t unexpectedTermination(int jobID);
 private:
     
     ServiceProcessorIDM_t serviceProcIDMap; ///Map to identifiy the ServiceRequests that have finished;

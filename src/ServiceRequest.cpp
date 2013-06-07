@@ -62,10 +62,14 @@ bool ServiceRequest::isStarted() {
     return this->started;
 }
 
+Task * ServiceRequest::getTask() {
+    return this->task;
+}
+
 void ServiceRequest::setStarted(bool s) {
     this->started=s;
 }
 
 std::string ServiceRequest::toString() {
-    return this->task->getName() + ":" + this->getName();
+    return this->task->getName() + ":" + this->getName() + " probably step " + std::to_string(this->task->position);
 }
