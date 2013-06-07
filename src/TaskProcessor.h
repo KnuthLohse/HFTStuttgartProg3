@@ -97,6 +97,11 @@ public:
      */
     int jobFinished(int jobID);
     
+    /**
+     * Returns a string with TaskProcessor, ServiceProcessor, Task and ServiceRequest names in it
+     * @param jobID ID of job of interest
+     */
+    std::string getRunningSRequestString(int jobID);
 private:
     
     ServiceProcessorIDM_t serviceProcIDMap; ///Map to identifiy the ServiceRequests that have finished;

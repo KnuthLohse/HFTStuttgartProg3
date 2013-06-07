@@ -200,3 +200,13 @@ int TaskProcessor::jobFinished(int jobID) {
     return 1;
 }
 
+std::string TaskProcessor::getRunningSRequestString(int jobID) {
+    ServiceProcessorIDM_t::iterator pos = this->serviceProcIDMap.find(jobID);
+    if (pos==this->serviceProcIDMap.end()) {
+        std::cout << "This Shouldn't happen - Didn't find jobID in TaskProcessor::JobFinished" << std::endl;
+        exit(10);
+    }
+    ServiceProcessor * serviceProcessor = pos->second;
+    return  this->getName() + ":" + serviceProcessor->getRunningSRequestString();
+}
+

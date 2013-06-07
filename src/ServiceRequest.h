@@ -16,6 +16,7 @@
 
 
 class ServiceReader;
+class Task;
  
 class ServiceRequest : public ConfigurationObjWrapper
 {
@@ -23,8 +24,9 @@ public:
     
     /**
      * @param conf Configuration of the ServiceRequest
+     * @param t Task to which this ServiceRequest belongs
      */
-    ServiceRequest(ConfigurationObj * conf);
+    ServiceRequest(ConfigurationObj * conf, Task * t);
     
     /**
      * @return Duration in seconds
@@ -52,6 +54,11 @@ public:
      * Checks if all neccessary Values are set, and  if an according ServiceProcessor exists
      */
     int validate(ServiceReader * sReader);
+    
+    /**
+     * @returns Name of Task and ServiceRequest
+     */
+    std::string toString();
 
     bool isStarted();
     void setStarted(bool s);
@@ -60,7 +67,7 @@ private:
     
     bool done; ///true if job has finished; else false
     bool started; ///true if the job is started
-
+    Task * task; ///Task that the ServiceRequest belongs to
 
 };
 

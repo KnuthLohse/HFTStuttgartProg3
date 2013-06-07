@@ -53,6 +53,11 @@ public:
      */
     void jobFinished();
     
+    /**
+     * @return Returns a String with the ServiceProcessor and the runningServiceRequest/Task on it
+     */
+    std::string getRunningSRequestString();
+    
     
     bool isWorking();
     

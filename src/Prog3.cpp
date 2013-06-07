@@ -29,6 +29,7 @@ int main(int argc, const char * argv[])
     while (add) {
         if (c.getNextJobs(&procsToStart)>0) {
             for (int i=0; i<procsToStart->size(); i++) {
+                c.jobStarted((*procsToStart)[i].second.first);
                 std::cout << "started proc with procID " << (*procsToStart)[i].second.first << " on ServiceProcessor " << (*procsToStart)[i].first << std::endl;
             }
             procsToStop->insert(procsToStop->end(), procsToStart->begin(), procsToStart->end());

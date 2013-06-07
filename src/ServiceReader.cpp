@@ -72,6 +72,9 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
     this->validateTasks(&logStream);
 }
 
+std::ofstream * ServiceReader::getLogStream() {
+    return &this->logStream;
+}
 
 ServiceReader::~ServiceReader() {
     delete this->tdReader;
@@ -80,6 +83,7 @@ ServiceReader::~ServiceReader() {
     }
     delete this->tasks;
     delete this->taskProcessors;
+    this->logStream.close();
     //tasks and taskprocessors should be
 }
 

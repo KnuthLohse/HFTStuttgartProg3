@@ -11,11 +11,13 @@
 #include "TaskProcessor.h"
 #include "ServiceReader.h"
 #include "SemanticParseException.h"
+#include "Task.h"
 typedef std::vector<TaskProcessor> TaskProcessorV_t;
 
-ServiceRequest::ServiceRequest(ConfigurationObj * conf): ConfigurationObjWrapper(conf) {
+ServiceRequest::ServiceRequest(ConfigurationObj * conf, Task * t): ConfigurationObjWrapper(conf) {
     this->done=false;
     this->started=false;
+    this->task=t;
 }
 
 int ServiceRequest::getDuration() {
@@ -62,4 +64,8 @@ bool ServiceRequest::isStarted() {
 
 void ServiceRequest::setStarted(bool s) {
     this->started=s;
+}
+
+std::string ServiceRequest::toString() {
+    return this->task->getName() + ":" + this->getName();
 }

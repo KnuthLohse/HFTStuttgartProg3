@@ -41,6 +41,12 @@ public:
      */
     size_t getTasks(TaskV_t ** tasks);
     
+    /**
+     *
+     *
+     */
+    std::ofstream * getLogStream();
+    
 private:
     /**
      * Will check the read Object creation and exit on failure

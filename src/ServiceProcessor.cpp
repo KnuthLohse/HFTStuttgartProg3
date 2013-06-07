@@ -69,3 +69,8 @@ bool ServiceProcessor::isWorking() {
     if (this->serviceRequestInProgress==NULL) return false;
     return true;
 }
+
+std::string ServiceProcessor::getRunningSRequestString() {
+    if (this->serviceRequestInProgress==NULL) return this->getName() + " is idle";
+    return this->getName() + " ::-:: " + this->serviceRequestInProgress->toString();
+}

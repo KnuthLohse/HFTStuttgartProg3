@@ -115,9 +115,30 @@ int Controller::jobFinished(int jobID) {
         std::cout << "Exit because job should be removed from Controller::taskProcIDMap but was not found";
         exit(10);
     };
+    *(this->serviceReader->getLogStream()) << "Service Request finished: " << pos->second->getRunningSRequestString(jobID) << std::endl;
     TaskProcessor * taskProcessor = pos->second;
     taskProcessor->jobFinished(jobID);
     this->taskProcIDMap.erase(pos);
+    return 1;
+}
+
+int Controller::jobStarted(int jobID) {
+    TaskProcessorIDM_t::iterator pos = this->taskProcIDMap.find(jobID);
+    if (pos==this->taskProcIDMap.end()) {
+        std::cout << "Exit because job should be in Controller::taskProcIDMap but was not found (JobStarted)";
+        exit(10);
+    };
+    *(this->serviceReader->getLogStream()) << "Service Request started: " << pos->second->getRunningSRequestString(jobID) << std::endl;
+    return 1;
+}
+
+int Controller::jobException(int jobID) {
+    TaskProcessorIDM_t::iterator pos = this->taskProcIDMap.find(jobID);
+    if (pos==this->taskProcIDMap.end()) {
+        std::cout << "Exit because job should be in Controller::taskProcIDMap but was not found (JobException)";
+        exit(10);
+    };
+    *(this->serviceReader->getLogStream()) << "SERVICE REQUEST EXCEPTION: " << pos->second->getRunningSRequestString(jobID) << std::endl;
     return 1;
 }
 

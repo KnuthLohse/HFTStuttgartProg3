@@ -38,14 +38,14 @@ Task::Task(ConfigurationObj *conf, TaskDescriptionReader * tReader): Configurati
             if (srConf==NULL) {
                 throw SemanticParseException("Could not find Service Request " + name);
             }
-            this->requests[i-1].push_back(new ServiceRequest(srConf));
+            this->requests[i-1].push_back(new ServiceRequest(srConf, this));
         }
         if ((*stepstrings)[i].length()) {
             ConfigurationObj * srConf=tReader->getConfigurationObj((*stepstrings)[i]);
             if (srConf==NULL) {
                 throw SemanticParseException("Could not find Service Request " + (*stepstrings)[i]);
             }
-            this->requests[i-1].push_back(new ServiceRequest(srConf));
+            this->requests[i-1].push_back(new ServiceRequest(srConf, this));
         }
         //now we have to turn around the requests to get them in the right order
         sRequestsV_t temp=sRequestsV_t();
