@@ -3,19 +3,20 @@
 #include "ServiceProcessor.h"
 #include "ServiceRequest.h"
 #include <vector>
+#include "TaskStartException.h"
 
 
 Controller::Controller(std::string filename) {
     this->serviceReader=new ServiceReader(filename);
     this->nextServiceRequestID=0;
-    this->requestIDMap=ServiceRequestIDM_t();
+    this->taskProcIDMap=TaskProcessorIDM_t();
 }
 
 
 Controller::Controller() {
     this->serviceReader=new ServiceReader("Service.ini");
     this->nextServiceRequestID=0;
-    this->requestIDMap=ServiceRequestIDM_t();
+    this->taskProcIDMap=TaskProcessorIDM_t();
 }
 
 Controller::~Controller() {
@@ -43,6 +44,11 @@ int Controller::getServiceProcessors(processorV_t ** processorList) {
     return ret;
 }
 
+/**
+ * Returns a List of procs with params to start
+ * @Param procsToStart OUT: List of procs to start; Undefined if we need to wait or all Jobs are done
+ * @Return: Number of Procs to start; -1 If all Jobs are finished; 0 if we need to wait for jobs to finish
+ */
 int Controller::getNextJobs(procsToStartV_t ** procsToStart) {
     if (*procsToStart==NULL) {
         (*procsToStart)=new procsToStartV_t();
@@ -50,53 +56,68 @@ int Controller::getNextJobs(procsToStartV_t ** procsToStart) {
     else {
         (*procsToStart)->clear();
     }
+    int ret=-1; //all tasks finished
     TaskProcessorV_t * taskProcessors;
     this->serviceReader->getTaskProcessors(&taskProcessors);
+    //try to continue Tasks that are in progress
+    for (int i=0; i<taskProcessors->size(); i++) {
+        try {
+            size_t r=(*taskProcessors)[i].resumeTask(procsToStart, this->nextServiceRequestID);
+            if (r>0) {
+                this->writeJobMap(*procsToStart, &(*taskProcessors)[i]);
+                return (int)r;
+            }
+            std::cout << "This shouldn't happen - tryed to continue Task and found no job to continue";
+            exit(10);
+            if (r==0) ret=0;
+        }
+        catch (TaskStartException &e) {
+            if (e.getReason()!=1) ret=0;
+            //TaskProcessor has not Tasks to resume - ignore
+        }
+    }
     TaskV_t * tasks;
     this->serviceReader->getTasks(&tasks);
-    int ret=-1;
-    for (int i=0; i<tasks->size(); i++) {
-        //std::cout << "Trying to start task " << i << " " << (*tasks)[i].getName() << std::endl;
-        if (!(*tasks)[i]->isDone()) {
-            //std::cout << "Task is not finished yet " << i << " " << (*tasks)[i].getName() << std::endl;
-            //Task is not finished jet
+    for (int j=0; j<tasks->size(); j++) {
+        if (!(*tasks)[j]->inProgress() && !(*tasks)[j]->isDone()) {
             ret=0;
-            if (!(*tasks)[i]->stepInProgress()) {
-                //std::cout << "Task is not in progress " << i << " " << (*tasks)[i]->getName() << std::endl;
-                //Task is idle and can be continued
-                int processor=(*tasks)[i]->findPossibleTaskProcessorForNextStep(taskProcessors);
-                if (processor>=0) {
-                    //std::cout << "Task is assigned to processor " << i << " " << (*tasks)[i]->getName() << std::endl;
-                    //task has found a taskprocessor that can handle its next step
-                    //processor is the TaskProcessor which will handle the process -> prepare the return
-                    ret=1;
-                    sRequestV_t * requests=(*tasks)[i]->getNextStep();
-                    for (int j=0; j<requests->size(); j++) {
-                        //register all Servicerequests
-                        ServiceProcessor * serviceProcessor=(*taskProcessors)[processor].registerServiceRequest((*requests)[j]);
-                        int index=serviceProcessor->getID();
-                        procParamP_t param=std::make_pair(this->nextServiceRequestID, (*requests)[j]->getDuration());
-                        (*procsToStart)->push_back(std::make_pair(index, param));
-                        //register in this Object
-                        this->requestIDMap.insert(std::make_pair(this->nextServiceRequestID, serviceProcessor));
-                        this->nextServiceRequestID++;
+            for (int i=0; i<taskProcessors->size(); i++) {
+                try {
+                    size_t r=(*taskProcessors)[i].startTask(procsToStart, this->nextServiceRequestID, (*tasks)[j]);
+                    if (r>0) {
+                        //std::cout << "breakpoint";
+                        this->writeJobMap(*procsToStart, &(*taskProcessors)[i]);
+                        return (int)r;
                     }
-                    return (int)(*procsToStart)->size();
+                    //shouldnt get here
+                    if (r==0) ret=0;
                 }
-                //std::cout << "Task is not assigned to processor " << i << " " << (*tasks)[i].getName() << std::endl;
+                catch (TaskStartException &e) {
+                }
             }
         }
     }
     return ret;
 }
+        
+void Controller::writeJobMap(procsToStartV_t * procsToStart, TaskProcessor * tp) {
+    for (int i=0; i<procsToStart->size(); i++) {
+        this->taskProcIDMap.insert(std::make_pair((*procsToStart)[i].second.first, tp));
+    }
+    this->nextServiceRequestID+=procsToStart->size();
+}
+
 static int stoped=0;
 int Controller::jobFinished(int jobID) {
     stoped++;
-    ServiceRequestIDM_t::iterator pos = this->requestIDMap.find(jobID);
-    if (pos== this->requestIDMap.end()) return -1;
-    ServiceProcessor * serviceProcessor = pos->second;
-    serviceProcessor->jobFinished();
-    //std::cout << "stopped " << stoped << std::endl;
+    TaskProcessorIDM_t::iterator pos = this->taskProcIDMap.find(jobID);
+    if (pos==this->taskProcIDMap.end()) {
+        std::cout << "Exit because job should be removed from Controller::taskProcIDMap but was not found";
+        exit(10);
+    };
+    TaskProcessor * taskProcessor = pos->second;
+    taskProcessor->jobFinished(jobID);
+    this->taskProcIDMap.erase(pos);
     return 1;
 }
 

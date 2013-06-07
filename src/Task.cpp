@@ -149,6 +149,7 @@ neededProcsM_t Task::getNeededProcessors() {
 }
 
 neededProcsM_t Task::getNeededProcessors(int step) {
+    if (step>=this->requests.size()) return neededProcsM_t();
     neededProcsM_t ret=neededProcsM_t();
     for (int i=0; i<this->requests[step].size(); i++) {
         std::string name=this->requests[step][i]->getServiceProcessorType();
@@ -161,6 +162,12 @@ neededProcsM_t Task::getNeededProcessors(int step) {
         }
     }
     return ret;
+}
+
+neededProcsM_t Task::getNeededProcessorsForNextStep() {
+    this->checkPosition();
+    if (this->position>this->requests.size()) return neededProcsM_t();
+    return this->getNeededProcessors(this->position);
 }
 
 int Task::findPossibleTaskProcessorForNextStep(TaskProcessorV_t * taskProcessors, int startProc) {
@@ -269,3 +276,24 @@ int Task::getNumberOfJobs() {
     //std::cout << this->getName() << " has " << ret << "Jobs to do" << std::endl;
     return ret;
 }
+
+sRequestV_t * Task::getRequests(int step) {
+    return &this->requests[step];
+}
+
+bool Task::inProgress() {
+    this->checkPosition();
+    if (this->position>=this->requests.size()) {
+        return false;
+    }
+    if (this->position==0) {
+        for (int i=0; i<requests[0].size(); i++) {
+            if (requests[0][i]->isStarted()) return true;
+        }
+        return false;
+    }
+    return true;
+}
+
+
+

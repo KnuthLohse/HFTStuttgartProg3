@@ -7,12 +7,14 @@
 
 class ServiceReader;
 class ServiceProcessor;
+class TaskProcessor;
 
 typedef std::pair<int,int> procParamP_t; //first: jobID to return when the job is finished; second: Duration in seconds
 typedef std::pair<int, procParamP_t> procIDParamP_t; //first: Index of Processor; Second Params to start the job
 typedef std::vector<procIDParamP_t> procsToStartV_t;
 typedef std::vector<std::string> processorV_t; //List of Processor Type Names to start
-typedef std::map<int, ServiceProcessor *> ServiceRequestIDM_t; /// first: ID of the job; second: serviceProcessor where the ServiceRequest Runs on
+typedef std::map<int, ServiceProcessor *> ServiceProcessorIDM_t; /// first: ID of the job; second: serviceProcessor where the ServiceRequest Runs on
+typedef std::map<int, TaskProcessor *> TaskProcessorIDM_t; /// first: ID of the job; second: serviceProcessor where the ServiceRequest Runs on
 
 
 class Controller {
@@ -85,12 +87,20 @@ public:
 	 */
 	int serviceProcessorUnexpectedTerminated(int processorID);
     
+    /**
+     * Links the JobIDs with the TaskProcessor in the TaskProcIDMap; increases the nextServiceRequestID
+     * @param procsToStart Has the jobIDs to link
+     * @param taskProc TaskProcessor to link the jobID to
+     */
+    void writeJobMap(procsToStartV_t * procsToStart, TaskProcessor *taskProc);
+    
     void debug();
+    
     
 private:
     ServiceReader * serviceReader; /// ServiceReader of the System.ini
     int nextServiceRequestID; ///ID of the next Job to start
-    ServiceRequestIDM_t requestIDMap; ///Map to identifiy the ServiceRequests that have finished;
+    TaskProcessorIDM_t taskProcIDMap; ///Map to identifiy the ServiceRequests that have finished;
     
 };
 

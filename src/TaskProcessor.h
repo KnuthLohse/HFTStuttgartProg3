@@ -16,6 +16,9 @@
 #include "ConfigurationObjWrapper.h"
 #include "Controller.h"
 
+class Task;
+typedef std::vector<Task *> TaskV_t;
+
 class ServiceRequest;
 typedef std::vector<ServiceProcessor> ServiceProcessorV_t;
 typedef std::map<std::string, int> neededProcsM_t;
@@ -72,12 +75,48 @@ public:
      * @return true if at least the given number of processors are existent; false else
      */
     bool canHandleProcsIgnoringIdleStatus(neededProcsM_t procsToTest);
+    
+    /**
+     * Adds the Task to the list of running tasks
+     * @param t Task to add
+     */
+    void addStartedTask(Task * t);
+
+    /**
+     * @param procsToStart OUT List to return to Rose/RT - musst be initialized and empty
+     * @param nextJobID number of the next Job
+     * @param task Task to start
+     * @return number of processes that are started
+     *
+     * Might Throw TaskStartException
+     */
+    size_t startTask(procsToStartV_t ** procsToStart, int nextJobID, Task * task);
+    
+    /**
+     * Trys to resume a task that is already startet on this processor
+     * @param procsToStart OUT List to return to Rose/RT - musst be initialized and empty
+     * @param nextJobID number of the next Job
+     * @return number of processes that are started
+     *
+     * Might Throw TaskStartException
+     */
+    size_t resumeTask(procsToStartV_t ** procsToStart, int nextJobID);
+    
+    /**
+     * Marks the given job as finished
+     * @param jobID job to mark as finished
+     * @return -1 if the job is not found
+     */
+    int jobFinished(int jobID);
+    
 private:
     
-
+    ServiceProcessorIDM_t serviceProcIDMap; ///Map to identifiy the ServiceRequests that have finished;
+    
     ServiceProcessorV_t serviceProcessors; ///Vector of the serviceProcessors of this TaskProcessor
-
+    TaskV_t startedTasks; ///Tasks that are running on this Processor
 };
+
 
 
 

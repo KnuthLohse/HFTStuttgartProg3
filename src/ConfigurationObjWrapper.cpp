@@ -8,6 +8,7 @@
 
 #include "ConfigurationObjWrapper.h"
 #include "Prog3Settings.h"
+#include <stdlib.h>
 
 #ifdef _USE_BOOST_REGEX_
 #include <boost/regex.hpp>
@@ -88,8 +89,6 @@ int ConfigurationObjWrapper::getIntValue(const std::string key) {
         std::cout  << key <<" of " << this->getName() << " seems to have more than one Value" << std::endl;
         exit(0);
     }
-    std::stringstream sstr(*(std::string*)values);
-    int ret;
-    sstr >> ret;
+    int ret = atoi((*values)[0].c_str());
     return ret;
 }

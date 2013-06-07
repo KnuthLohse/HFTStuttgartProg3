@@ -95,6 +95,12 @@ public:
      */
     neededProcsM_t getNeededProcessors(int step);
     
+    
+    /**
+     * @return Map of processors that are needed to execute the next step
+     */
+    neededProcsM_t getNeededProcessorsForNextStep();
+    
     /**
      * @return list of processorTypes needed to execute this task; each one is listed only once, even if more than one of a type is needed.
      */
@@ -111,8 +117,19 @@ public:
      */
     bool stepInProgress();
     
+    /**
+     * @param step Step of interest
+     * @return Requests of the given step
+     */
+    sRequestV_t * getRequests(int step);
+      
     //for Debuging purpose
     int getNumberOfJobs();
+    
+    /**
+     * @return true if task is started; false else;
+     */
+    bool inProgress();
     
 private:
     /*

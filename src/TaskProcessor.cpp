@@ -8,6 +8,8 @@
 
 #include "TaskProcessor.h"
 #include "ServiceRequest.h"
+#include "Task.h"
+#include "TaskStartException.h"
 
 static stringV_t assignedServiceProcessors=stringV_t();
 
@@ -39,6 +41,8 @@ TaskProcessor::TaskProcessor(ConfigurationObj *conf, ConfigurationReader *reader
         assignedServiceProcessors.push_back((*values)[i]);
         (this->serviceProcessors).push_back(ServiceProcessor(spCObj));
     }
+    this->startedTasks=TaskV_t();
+    this->serviceProcIDMap=ServiceProcessorIDM_t();
 }
 
 
@@ -60,6 +64,12 @@ int TaskProcessor::supports(std::string type, bool ignoreIdleStatus) {
 }
 
 bool TaskProcessor::canHandleProcs(neededProcsM_t procsToTest) {
+    for (int i=0; i<this->startedTasks.size(); i++) {
+        if (this->startedTasks[i]->isDone()) {
+            this->startedTasks.erase(this->startedTasks.begin()+i);
+            i--;
+        }
+    }
     for(neededProcsM_t::iterator pos = procsToTest.begin(); pos != procsToTest.end(); ++pos) {
         if (pos->second > this->supports(pos->first)) {
             return false;
@@ -110,5 +120,99 @@ int TaskProcessor::registerServiceProceossors(stringV_t * serviceProcessorTypes,
         startID++;
     }
     return startID;
+}
+
+void TaskProcessor::addStartedTask(Task *t) {
+    for (int i=0; i<this->startedTasks.size(); i++) {
+        if (this->startedTasks[i]==t) return;
+    }
+    this->startedTasks.push_back(t);
+}
+
+size_t TaskProcessor::startTask(procsToStartV_t ** procsToStart, int nextJobID, Task * task) {
+    neededProcsM_t nProcs=task->getNeededProcessors();
+    if (!this->canHandleProcsIgnoringIdleStatus(nProcs)) throw TaskStartException(-1);
+    if (this->startedTasks.size()>=this->getQueueSize()) throw TaskStartException(0);
+    if (task->isDone()) throw TaskStartException(1);
+    nProcs.clear();
+    nProcs=task->getNeededProcessors(0);
+    if (!this->canHandleProcs(nProcs)) throw TaskStartException(0);
+    this->startedTasks.push_back(task);
+    sRequestV_t * requests;
+    requests=task->getRequests(0);
+    for (int i=0; i<requests->size(); i++) { //No Counter - will count when serviceRequest is assigned
+        bool assigned=false;
+        for (int j=0; j<this->serviceProcessors.size() && !assigned; j++) {
+            if ((*requests)[i]->getServiceProcessorType()==this->serviceProcessors[j].getType() && !this->serviceProcessors[j].isWorking()) {
+                assigned=true;
+                this->serviceProcessors[j].registerRequest((*requests)[i]);
+                int index=this->serviceProcessors[j].getID();
+                procParamP_t param=std::make_pair(nextJobID, (*requests)[i]->getDuration());
+                (*procsToStart)->push_back(std::make_pair(index, param));
+                this->serviceProcIDMap.insert(std::make_pair(nextJobID, &this->serviceProcessors[j]));
+                nextJobID++;
+            }
+        }
+    }
+    return requests->size();
+}
+
+size_t TaskProcessor::resumeTask(procsToStartV_t ** procsToStart, int nextJobID) {
+    if (this->startedTasks.size()==0) throw TaskStartException(2);
+    for (int tNum=0; tNum<this->startedTasks.size(); tNum++) {
+        try {
+            if (this->startedTasks[tNum]->isDone()) {
+                this->startedTasks.erase(startedTasks.begin()+tNum);
+                tNum--;
+                throw TaskStartException(1);
+            }
+            if (this->startedTasks[tNum]->stepInProgress()) throw TaskStartException(3);
+            neededProcsM_t nProcs=this->startedTasks[tNum]->getNeededProcessorsForNextStep();
+            if (this->startedTasks[tNum]->getName()=="T025") {
+                ; //breakpoint
+            }
+            if (!this->canHandleProcs(nProcs)) throw TaskStartException(0);
+            sRequestV_t * requests;
+            requests=this->startedTasks[tNum]->getNextStep();
+            for (int i=0; i<requests->size(); i++) {
+                bool assigned=false;
+                for (int j=0; j<this->serviceProcessors.size() && !assigned; j++) {
+                    if ((*requests)[i]->getServiceProcessorType()==this->serviceProcessors[j].getType() && !this->serviceProcessors[j].isWorking()) {
+                        assigned=true;
+                        this->serviceProcessors[j].registerRequest((*requests)[i]);
+                        int index=this->serviceProcessors[j].getID();
+                        procParamP_t param=std::make_pair(nextJobID, (*requests)[i]->getDuration());
+                        (*procsToStart)->push_back(std::make_pair(index, param));
+                        this->serviceProcIDMap.insert(std::make_pair(nextJobID, &this->serviceProcessors[j]));
+                        nextJobID++;
+                    }
+                }
+            }
+            //test may be removed in final version
+            for (int i=0; i<requests->size(); i++) {
+                if (!(*requests)[i]->isStarted()) {
+                    std::cout << "something went wrong in TaskProcessor::resumeTask" <<std::endl;
+                    exit(10);
+                }
+            }
+            return requests->size();
+        }
+        catch (TaskStartException &e) {
+            //ignore error
+        }
+    }
+    throw TaskStartException(0);
+}
+
+int TaskProcessor::jobFinished(int jobID) {
+    ServiceProcessorIDM_t::iterator pos = this->serviceProcIDMap.find(jobID);
+    if (pos==this->serviceProcIDMap.end()) {
+        std::cout << "This Shouldn't happen - Didn't find jobID in TaskProcessor::JobFinished" << std::endl;
+        exit(10);
+    }
+    ServiceProcessor * serviceProcessor = pos->second;
+    serviceProcessor->jobFinished();
+    this->serviceProcIDMap.erase(pos);
+    return 1;
 }
 

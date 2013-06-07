@@ -23,7 +23,6 @@ int ServiceRequest::getDuration() {
 }
 
 bool ServiceRequest::isDone() {
-    
     return this->done;
 }
 
