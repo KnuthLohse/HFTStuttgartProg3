@@ -73,7 +73,7 @@ int Controller::getNextJobs(procsToStartV_t ** procsToStart) {
             if (r==0) ret=0;
         }
         catch (TaskStartException &e) {
-            if (e.getReason()!=1) ret=0;
+            if (e.getReason()!=2) ret=0;
             //TaskProcessor has not Tasks to resume - ignore
         }
     }

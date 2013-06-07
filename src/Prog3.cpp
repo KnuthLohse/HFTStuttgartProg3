@@ -27,16 +27,20 @@ int main(int argc, const char * argv[])
     procsToStartV_t * procsToStop=new procsToStartV_t();
     bool add=true;
     while (add) {
-        if (c.getNextJobs(&procsToStart)>0) {
+        int test=c.getNextJobs(&procsToStart);
+        if (test>0) {
             for (int i=0; i<procsToStart->size(); i++) {
                 c.jobStarted((*procsToStart)[i].second.first);
                 std::cout << "started proc with jobID " << (*procsToStart)[i].second.first << " on ServiceProcessor " << (*procsToStart)[i].first << std::endl;
             }
             procsToStop->insert(procsToStop->end(), procsToStart->begin(), procsToStart->end());
         }
+        else if (test==-1) {
+            add=false;
+        }
         else {
             if (procsToStop->size()>0) {
-                if (((*procsToStop)[procsToStop->size()-1].second.first)==2) {
+                if (((*procsToStop)[procsToStop->size()-1].second.first)==100) {
                     JobsToKillV_t toKill=c.jobUnexpectedTerminated((*procsToStop)[procsToStop->size()-1].second.first);
                     std::cout << "---- KILLING proc with jobID ---- " << (*procsToStop)[procsToStop->size()-1].second.first << " on ServiceProcessor " << (*procsToStop)[procsToStop->size()-1].first << std::endl;
                     for (int i=0; i<toKill.size(); i++) {
@@ -55,7 +59,6 @@ int main(int argc, const char * argv[])
                     procsToStop->pop_back();
                 }
             }
-            else add=false;
         }
     }
 }
