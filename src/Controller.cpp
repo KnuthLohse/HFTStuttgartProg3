@@ -3,6 +3,7 @@
 #include "ServiceProcessor.h"
 #include "ServiceRequest.h"
 #include <vector>
+#include <time.h>
 #include "TaskStartException.h"
 
 
@@ -113,7 +114,7 @@ int Controller::jobFinished(int jobID) {
         std::cout << "Exit because job should be removed from Controller::taskProcIDMap but was not found";
         exit(10);
     };
-    *(this->serviceReader->getLogStream()) << "Service Request finished: " << pos->second->getRunningSRequestString(jobID) << std::endl;
+    *(this->serviceReader->getLogStream()) << this->getTimestamp() << "Service Request finished: " << pos->second->getRunningSRequestString(jobID) << std::endl;
     TaskProcessor * taskProcessor = pos->second;
     taskProcessor->jobFinished(jobID);
     this->taskProcIDMap.erase(pos);
@@ -126,7 +127,7 @@ int Controller::jobStarted(int jobID) {
         std::cout << "Exit because job should be in Controller::taskProcIDMap but was not found (JobStarted)";
         exit(10);
     };
-    *(this->serviceReader->getLogStream()) << "Service Request started: " << pos->second->getRunningSRequestString(jobID) << std::endl;
+    *(this->serviceReader->getLogStream()) << this->getTimestamp() << "Service Request started: " << pos->second->getRunningSRequestString(jobID) << std::endl;
     return 1;
 }
 
@@ -136,7 +137,7 @@ int Controller::jobException(int jobID) {
         std::cout << "Exit because job should be in Controller::taskProcIDMap but was not found (JobException)";
         exit(10);
     };
-    *(this->serviceReader->getLogStream()) << "SERVICE REQUEST EXCEPTION: " << pos->second->getRunningSRequestString(jobID) << std::endl;
+    *(this->serviceReader->getLogStream()) << this->getTimestamp() << "SERVICE REQUEST EXCEPTION: " << pos->second->getRunningSRequestString(jobID) << std::endl;
     return 1;
 }
 
@@ -146,7 +147,7 @@ JobsToKillV_t Controller::jobUnexpectedTerminated(int jobID) {
         std::cout << "Exit because job should be in Controller::taskProcIDMap but was not found (JobException)";
         exit(10);
     };
-    *(this->serviceReader->getLogStream()) << "SERVICE REQUEST/SERVICE PROCESSOR UNEXPECTED TERMINATED: " << pos->second->getRunningSRequestString(jobID) << std::endl;
+    *(this->serviceReader->getLogStream()) << this->getTimestamp() << "SERVICE REQUEST/SERVICE PROCESSOR UNEXPECTED TERMINATED: " << pos->second->getRunningSRequestString(jobID) << std::endl;
     TaskProcessor * taskProcessor = pos->second;
     JobsToKillV_t ret=taskProcessor->unexpectedTermination(jobID);
     this->taskProcIDMap.erase(pos);
@@ -160,7 +161,7 @@ int Controller::jobAbortConfirmation(int jobID) {
         std::cout << "Exit because job should be removed from Controller::taskProcIDMap but was not found";
         exit(10);
     };
-    *(this->serviceReader->getLogStream()) << "Service Request Aborted: " << pos->second->getRunningSRequestString(jobID) << std::endl;
+    *(this->serviceReader->getLogStream()) << this->getTimestamp() << "Service Request Aborted: " << pos->second->getRunningSRequestString(jobID) << std::endl;
     return 1;
 }
 
@@ -173,4 +174,12 @@ void Controller::debug() {
         nOfJobs=nOfJobs+jobs;
     }
     std::cout << "Number of Jobs: " << nOfJobs << std::endl;
+}
+
+std::string Controller::getTimestamp() {
+    time_t timestamp;
+    tm *t;
+    timestamp = time(0);
+    t = localtime(&timestamp);
+    return "["+std::to_string(t->tm_hour)+":"+std::to_string(t->tm_min)+":"+std::to_string(t->tm_sec)+"]";
 }

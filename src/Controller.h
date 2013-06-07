@@ -102,6 +102,11 @@ public:
      */
     void writeJobMap(procsToStartV_t * procsToStart, TaskProcessor *taskProc);
     
+    /**
+     * @returns the current timestamp
+     */
+    std::string getTimestamp();
+    
     void debug();
     
     
