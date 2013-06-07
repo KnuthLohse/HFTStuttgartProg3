@@ -142,6 +142,17 @@ int Controller::jobException(int jobID) {
     return 1;
 }
 
+int Controller::jobUnexpectedTerminated(int jobID) {
+    TaskProcessorIDM_t::iterator pos = this->taskProcIDMap.find(jobID);
+    if (pos==this->taskProcIDMap.end()) {
+        std::cout << "Exit because job should be in Controller::taskProcIDMap but was not found (JobException)";
+        exit(10);
+    };
+    *(this->serviceReader->getLogStream()) << "SERVICE REQUEST/SERVICE PROCESSOR UNEXPECTED TERMINATED: " << pos->second->getRunningSRequestString(jobID) << std::endl;
+    return 1;
+}
+
+
 void Controller::debug() {
     TaskV_t * tasks;
     serviceReader->getTasks(&tasks);

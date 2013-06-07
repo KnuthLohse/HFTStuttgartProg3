@@ -85,7 +85,7 @@ public:
 	 * To Call if an processor Terminates Unexpected
 	 * Probably should Terminate everything, not sure about this.
 	 */
-	int serviceProcessorUnexpectedTerminated(int processorID);
+	int jobUnexpectedTerminated(int processorID);
     
     /**
      * Links the JobIDs with the TaskProcessor in the TaskProcIDMap; increases the nextServiceRequestID
