@@ -87,15 +87,6 @@ bool TaskProcessor::canHandleProcsIgnoringIdleStatus(neededProcsM_t procsToTest)
     return true;
 }
 
-ServiceProcessor * TaskProcessor::registerServiceRequest(ServiceRequest * serviceRequest) {
-    for(int i=0; i<this->serviceProcessors.size(); i++) {
-        if (serviceProcessors[i].registerRequest(serviceRequest)>0) {
-            return &serviceProcessors[i];
-        }
-    }
-    return NULL;
-}
-
 int TaskProcessor::getQueueSize() {
     return this->getIntValue("Queue.Size");
 }
@@ -120,13 +111,6 @@ int TaskProcessor::registerServiceProceossors(stringV_t * serviceProcessorTypes,
         startID++;
     }
     return startID;
-}
-
-void TaskProcessor::addStartedTask(Task *t) {
-    for (int i=0; i<this->startedTasks.size(); i++) {
-        if (this->startedTasks[i]==t) return;
-    }
-    this->startedTasks.push_back(t);
 }
 
 size_t TaskProcessor::startTask(procsToStartV_t ** procsToStart, int nextJobID, Task * task) {

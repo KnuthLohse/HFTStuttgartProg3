@@ -59,12 +59,6 @@ public:
     int registerServiceProceossors(stringV_t * ServiceProcessorTypes, int startID);
     
     /**
-     * @param serviceRequest ServiceRequest to assign to a ServiceProcessor
-     * @return ServiceProcessor that will handle the task
-     */
-    ServiceProcessor * registerServiceRequest(ServiceRequest * serviceRequest);
-
-    /**
      * @param Map of free processors needed
      * @return true if at least the given number of processors are idle; false else
      */
@@ -75,12 +69,6 @@ public:
      * @return true if at least the given number of processors are existent; false else
      */
     bool canHandleProcsIgnoringIdleStatus(neededProcsM_t procsToTest);
-    
-    /**
-     * Adds the Task to the list of running tasks
-     * @param t Task to add
-     */
-    void addStartedTask(Task * t);
 
     /**
      * @param procsToStart OUT List to return to Rose/RT - musst be initialized and empty
@@ -112,7 +100,6 @@ public:
 private:
     
     ServiceProcessorIDM_t serviceProcIDMap; ///Map to identifiy the ServiceRequests that have finished;
-    
     ServiceProcessorV_t serviceProcessors; ///Vector of the serviceProcessors of this TaskProcessor
     TaskV_t startedTasks; ///Tasks that are running on this Processor
 };

@@ -76,15 +76,6 @@ public:
     int findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors);
     
     /**
-     * Will also register the returned TaskProcessor to be the one that handles this Task
-     *
-     * @param taskProcessors List of all taskProcessors to choose from;
-     * @param startProc Processor that should be tested first
-     * @return index of the first taskProcessor in the list that is capable of executing this Task; -1 if none of the given TaskProcessors is cabapble of executing this Task; -2 if the Task has a step that is in progress
-     *
-     */
-    int findPossibleTaskProcessorForNextStep(TaskProcessorV_t * taskProcessors, int startProc=0);
-    /**
      * @return Map of processors that are needed to execute this Task - key is the type of Processor, Value the number of processors needed
      */
     neededProcsM_t getNeededProcessors();

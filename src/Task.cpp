@@ -108,7 +108,6 @@ stringV_t Task::getNeededProcessorTypes(int step) {
         if (insert) ret.push_back(type);
     }
     return ret;
-    
 }
 
 stringV_t Task::getNeededProcessorTypes() {
@@ -168,39 +167,6 @@ neededProcsM_t Task::getNeededProcessorsForNextStep() {
     this->checkPosition();
     if (this->position>this->requests.size()) return neededProcsM_t();
     return this->getNeededProcessors(this->position);
-}
-
-int Task::findPossibleTaskProcessorForNextStep(TaskProcessorV_t * taskProcessors, int startProc) {
-    this->checkPosition();
-    //check if step is in progress
-    if (this->stepInProgress()) return -2;
-    //search a taskProcessor that is capable of handling this Task if none is set allready
-    if (this->taskProcessor==NULL) {
-        neededProcsM_t pM=this->getNeededProcessors();
-        for (int i=0; i<taskProcessors->size(); i++) {
-            
-            int tpIndex=(i+startProc)%taskProcessors->size();
-            if ((*taskProcessors)[tpIndex].canHandleProcsIgnoringIdleStatus(pM)) {
-                //processor is cabale of handling this task, but is it also idle to start this task?
-                neededProcsM_t neededProcessors=getNeededProcessors(this->position);
-                if ((*taskProcessors)[tpIndex].canHandleProcs(neededProcessors)) {
-                    this->taskProcessor=&((*taskProcessors)[tpIndex]);
-                    return tpIndex;
-                }
-            }
-        }
-        return -1;
-    }
-    //check if TaskProcessor that handles this Task is in the list; if not return -1
-    int tpIndex=-1;
-    for (int i=0; i<taskProcessors->size(); i++) {
-        if (&((*taskProcessors)[i])==this->taskProcessor) tpIndex=i;
-    }
-    if (tpIndex<0) return -1;
-    //check if registerd TaskProcessor can handle the next step
-    neededProcsM_t neededProcessors=getNeededProcessors(this->position);
-    if ((*taskProcessors)[tpIndex].canHandleProcs(neededProcessors)) return tpIndex;
-    return -1;
 }
 
 int Task::findPossibleTaskProcessor(TaskProcessorV_t * taskProcessors) {
