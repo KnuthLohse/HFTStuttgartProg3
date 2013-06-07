@@ -96,24 +96,22 @@ public:
     int jobAbortConfirmation(int jobID);
     
     /**
-     * Links the JobIDs with the TaskProcessor in the TaskProcIDMap; increases the nextServiceRequestID
-     * @param procsToStart Has the jobIDs to link
-     * @param taskProc TaskProcessor to link the jobID to
-     */
-    void writeJobMap(procsToStartV_t * procsToStart, TaskProcessor *taskProc);
-    
-    /**
      * @returns the current timestamp
      */
     std::string getTimestamp();
-    
-    void debug();
     
     
 private:
     ServiceReader * serviceReader; /// ServiceReader of the System.ini
     int nextServiceRequestID; ///ID of the next Job to start
     TaskProcessorIDM_t taskProcIDMap; ///Map to identifiy the ServiceRequests that have finished;
+    
+    /**
+     * Links the JobIDs with the TaskProcessor in the TaskProcIDMap; increases the nextServiceRequestID
+     * @param procsToStart Has the jobIDs to link
+     * @param taskProc TaskProcessor to link the jobID to
+     */
+    void writeJobMap(procsToStartV_t * procsToStart, TaskProcessor *taskProc);
     
 };
 

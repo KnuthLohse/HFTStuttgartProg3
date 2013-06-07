@@ -165,17 +165,6 @@ int Controller::jobAbortConfirmation(int jobID) {
     return 1;
 }
 
-void Controller::debug() {
-    TaskV_t * tasks;
-    serviceReader->getTasks(&tasks);
-    int nOfJobs=0;
-    for (int i=0; i<tasks->size(); i++) {
-        int jobs=(*tasks)[i]->getNumberOfJobs();
-        nOfJobs=nOfJobs+jobs;
-    }
-    std::cout << "Number of Jobs: " << nOfJobs << std::endl;
-}
-
 std::string Controller::getTimestamp() {
     time_t timestamp;
     tm *t;
