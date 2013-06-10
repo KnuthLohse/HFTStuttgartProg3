@@ -14,7 +14,7 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
     //this->readFile();
     if (this->errors) {
         //Fehler beim einlesen der System.ini
-        std::cout << this->errorString.str();
+        std::cout << (*(this->errorString)).str();
         exit(-1);
     }
     ConfigurationObj* root=this->getConfigurationObj("System");
@@ -49,9 +49,12 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
 #endif /*_DEBUG_*/
 #endif /*_USE_HARDCODED_TASKCONFIG_*/
     //Open logfile
-    this->logStream=std::ofstream();
-    this->logStream.open(path+".log");
-    if (!this->logStream.is_open()) {
+    this->logStream=(std::ofstream *) new std::ofstream();
+    //(*(this->logStream)).open(path+".log", std::ios::out);
+    std::string temp=path+"log";
+    (*(this->logStream)).open(temp.c_str());
+
+    if (!(*(this->logStream)).is_open()) {
         std::cout << "Could not open logfile: " << path+".log" << std::endl;
         exit(-1);
     }
@@ -61,19 +64,19 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
     this->tasks=new TaskV_t();
     try {
         this->tdReader->getTasks(this->tasks);
-    } catch (SemanticParseException e) {
+    } catch (SemanticParseException &e) {
         //if we get an error creating the tasks print it to the log file
-        this->logStream << e.getError() << std::endl;
+        (*(this->logStream)) << e.getError() << std::endl;
     }
     //write taskfileparsingerrors to logfile
     if (this->tdReader->getErrorString(&tdErrorString)) {
-        this->logStream << tdErrorString;
+        (*(this->logStream)) << tdErrorString;
     }
-    this->validateTasks(&logStream);
+    this->validateTasks(this->logStream);
 }
 
 std::ofstream * ServiceReader::getLogStream() {
-    return &this->logStream;
+    return this->logStream;
 }
 
 ServiceReader::~ServiceReader() {
@@ -83,7 +86,8 @@ ServiceReader::~ServiceReader() {
     }
     delete this->tasks;
     delete this->taskProcessors;
-    this->logStream.close();
+    (*(this->logStream)).close();
+    delete this->logStream;
     //tasks and taskprocessors should be
 }
 

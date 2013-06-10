@@ -12,6 +12,8 @@
 #include "ServiceReader.h"
 #include "SemanticParseException.h"
 #include "Task.h"
+#include <stdio.h>
+#include <stdlib.h>
 typedef std::vector<TaskProcessor> TaskProcessorV_t;
 
 ServiceRequest::ServiceRequest(ConfigurationObj * conf, Task * t): ConfigurationObjWrapper(conf) {
@@ -71,5 +73,7 @@ void ServiceRequest::setStarted(bool s) {
 }
 
 std::string ServiceRequest::toString() {
-    return this->task->getName() + ":" + this->getName() + " probably step " + std::to_string(this->task->position);
+	char temp[100];
+	sprintf(temp, "%d", this->task->position);
+    return this->task->getName() + ":" + this->getName() + " probably step " + temp;
 }

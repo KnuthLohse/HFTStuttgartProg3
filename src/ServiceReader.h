@@ -63,7 +63,7 @@ private:
     TaskDescriptionReader * tdReader; ///Reader of the TaskDescription identified in the Service.ini
     TaskProcessorV_t * taskProcessors; ///Task Processors as declared by the Service.ini
     TaskV_t * tasks; ///Tasks as declared by the TaskDescriptionFile read by tdReader
-    std::ofstream logStream; //Filestream for loging;
+    std::ofstream * logStream; //Filestream for loging;
 };
 
 

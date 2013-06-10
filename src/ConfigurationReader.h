@@ -11,6 +11,7 @@
 #include <map>
 #include <string>
 #include "ConfigurationObj.h"
+#include "Prog3Settings.h"
 
 typedef std::map<std::string, ConfigurationObj*> confObjMap_t;
 
@@ -42,7 +43,7 @@ public:
 protected:
     // Read configuration file
     void readFile();
-    std::ostringstream errorString; //Parsing Errors
+    std::ostringstream * errorString; //Parsing Errors
     int errors;// number of errors parsing the file
     
 private:

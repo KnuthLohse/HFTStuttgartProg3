@@ -170,5 +170,10 @@ std::string Controller::getTimestamp() {
     tm *t;
     timestamp = time(0);
     t = localtime(&timestamp);
-    return "["+std::to_string(t->tm_hour)+":"+std::to_string(t->tm_min)+":"+std::to_string(t->tm_sec)+"]";
+    std::string ret;
+    char temp[12];
+    sprintf(temp, "[%d:%d:%d]", t->tm_hour, t->tm_min, t->tm_sec);
+    ret=temp;
+    //return "["+std::to_string(t->tm_hour)+":"+std::to_string(t->tm_min)+":"+std::to_string(t->tm_sec)+"]";
+    return ret;
 }

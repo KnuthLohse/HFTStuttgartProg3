@@ -30,7 +30,7 @@ size_t TaskDescriptionReader::getTasks(TaskV_t * tasks) {
     for (int i=0; i<size; i++) {
         ConfigurationObj* tpCObj=this->getConfigurationObj((*values)[i]);
         if (tpCObj==NULL) {
-            this->errorString << "Definition of TaskProcessors " << (*values)[i] << " not found" << std::endl;
+            (*(this->errorString)) << "Definition of TaskProcessors " << (*values)[i] << " not found" << std::endl;
             this->errors++;
         }
         else {
@@ -44,12 +44,12 @@ size_t TaskDescriptionReader::getTasks(TaskV_t * tasks) {
                     createdTasks.push_back((*values)[i]);
                 }
                 catch(SemanticParseException &e) {
-                    this->errorString << e.getError() << std::endl;
+                    (*(this->errorString)) << e.getError() << std::endl;
                     this->errors++;
                 }
             }
             else {
-                this->errorString << "Task " << (*values)[i] << " tried to start twice - ignoring second call" << std::endl;
+                (*(this->errorString)) << "Task " << (*values)[i] << " tried to start twice - ignoring second call" << std::endl;
                 this->errors++;
             }
         }

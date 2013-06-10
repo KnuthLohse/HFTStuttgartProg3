@@ -17,7 +17,7 @@ using std::string;
 ConfigurationReader::ConfigurationReader(string path)
 {
     this->mPath = path;
-    this->errorString=std::ostringstream();
+    this->errorString=(std::ostringstream *) new std::ostringstream();
     this->errors=0;
     this->readFile();
 }
@@ -26,6 +26,7 @@ ConfigurationReader::~ConfigurationReader() {
     for(confObjMap_t::iterator it = this->confObjects.begin(); it != this->confObjects.end(); ++it) {
         delete it->second;
     }
+    delete this->errorString;
 }
 
 ConfigurationReader::ConfigurationReader(ConfigurationReader &toCopy) {
@@ -38,7 +39,7 @@ void ConfigurationReader::readFile()
     // File variables
     std::ifstream fileHandler(this->mPath.c_str());
     if (fileHandler.fail()) {
-        this->errorString << "File " << this->mPath << " could not be opened" << std::endl;
+        *(this->errorString) << "File " << this->mPath << " could not be opened" << std::endl;
         this->errors++;
         return;
     }
@@ -70,12 +71,12 @@ void ConfigurationReader::readFile()
             string parent = rxSearchResults[2];
             ConfigurationObj * parentObj=this->getConfigurationObj(parent);
             if (parentObj==NULL) {
-                this->errorString << "Configurationobject " << parent << " not defined, but expected by " << name <<std::endl;
+                (*(this->errorString)) << "Configurationobject " << parent << " not defined, but expected by " << name <<std::endl;
                 this->errors++;
                 ignoreAttributes=true;
             }
             else if (this->getConfigurationObj(name)!=NULL) {
-                this->errorString << "Double Definition of Object " << name << " in " << this->mPath << ". Ignoring this Object" << std::endl;
+                *(this->errorString) << "Double Definition of Object " << name << " in " << this->mPath << ". Ignoring this Object" << std::endl;
                 this->errors++;
                 toDelete.push_back(name);
                 ignoreAttributes=true;
@@ -84,7 +85,7 @@ void ConfigurationReader::readFile()
                 int e=errors;
                 for (int i=0; i<toDelete.size(); i++) {
                     if (toDelete[i]==parentObj->getName()) {
-                        this->errorString << "Parent of Object " << name << " is invalid " << this->mPath << ". Ignoring this Object" << std::endl;
+                        *(this->errorString) << "Parent of Object " << name << " is invalid " << this->mPath << ". Ignoring this Object" << std::endl;
                         this->errors++;
                         ignoreAttributes=true;
                     }
@@ -104,7 +105,7 @@ void ConfigurationReader::readFile()
             //object without parent;
             string name = rxSearchResults[1];
             if (this->getConfigurationObj(name)!=NULL) {
-                this->errorString << "Double Definition of Object " << name << " in " << this->mPath << ". Ignoring this Object" << std::endl;
+                *(this->errorString) << "Double Definition of Object " << name << " in " << this->mPath << ". Ignoring this Object" << std::endl;
                 this->errors++;
                 toDelete.push_back(name);
             }
@@ -120,11 +121,11 @@ void ConfigurationReader::readFile()
         if(rxSearchReturn && !lineDone)
         {
             if (lastObj==NULL) {
-                this->errorString << "Attribute definition before Object Definition - Ignoring line" << std::endl;
+                *(this->errorString) << "Attribute definition before Object Definition - Ignoring line" << std::endl;
                 this->errors++;
             }
             else if (ignoreAttributes) {
-                this->errorString << "Ignoring Attribute definition line" << std::endl;
+                *(this->errorString) << "Ignoring Attribute definition line" << std::endl;
             }
             else {
                 //Attributes
@@ -149,7 +150,7 @@ void ConfigurationReader::readFile()
             lineDone=1;
         }
         if (!lineDone) {
-            this->errorString << "Ignoring Line - Couldn't Parse it: " << line << std::endl;
+            *(this->errorString) << "Ignoring Line - Couldn't Parse it: " << line << std::endl;
             this->errors++;
         }
         //std::cout << results[1] << " . " << results[2] << "\n";
@@ -166,6 +167,6 @@ ConfigurationObj * ConfigurationReader::getConfigurationObj(std::string key) {
 }
 
 int ConfigurationReader::getErrorString(std::string * error) {
-    *error=this->errorString.str();
+    *error=(*(this->errorString)).str();
     return this->errors;
 }
