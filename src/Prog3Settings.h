@@ -9,11 +9,11 @@
 #ifndef _PROG3_PROG3SETTINGS_H_
 #define _PROG3_PROG3SETTINGS_H_
 
-#define _DEBUG_
-#define _USE_HARDCODED_TASKCONFIG_
+//#define _DEBUG_
+//#define _USE_HARDCODED_TASKCONFIG_
 
-//#define _USE_BOOST_REGEX_
-#define _USE_STD_REGEX_
+#define _USE_BOOST_REGEX_
+//#define _USE_STD_REGEX_
 
 #ifdef _USE_BOOST_REGEX_
     #define _REGEX_PREFIX_ boost
