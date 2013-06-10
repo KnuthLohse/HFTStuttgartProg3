@@ -51,7 +51,7 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
     //Open logfile
     this->logStream=(std::ofstream *) new std::ofstream();
     //(*(this->logStream)).open(path+".log", std::ios::out);
-    std::string temp=path+"log";
+    std::string temp=path+".log";
     (*(this->logStream)).open(temp.c_str());
 
     if (!(*(this->logStream)).is_open()) {
