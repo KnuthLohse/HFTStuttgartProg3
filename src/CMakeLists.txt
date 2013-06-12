@@ -38,5 +38,5 @@ add_executable(prog3_parseNscedule ${CONTROLLERTEST_SRCS})
 target_link_libraries(prog3_parseNscedule ${CONTROLLERTESTLIBS})
 
 #------ INSTALL RULES ----------------
-install (TARGETS controller DESTINATION lib)
-install (FILES "${PROJECT_SOURCE_DIR}/src/Controller.h" DESTINATION include)
+install (TARGETS controller DESTINATION /Rational/lib)
+install (FILES "${PROJECT_SOURCE_DIR}/src/Controller.h" DESTINATION /Rational/include)
