@@ -7,10 +7,6 @@
 //
 
 #include <iostream>
-#include "ConfigurationReader.h"
-#include "ServiceReader.h"
-#include "TaskProcessor.h"
-#include "Task.h"
 #include "Controller.h"
 
 int main(int argc, const char * argv[])
