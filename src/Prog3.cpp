@@ -15,7 +15,7 @@
 
 int main(int argc, const char * argv[])
 {
-    Controller c=Controller("/Users/JoH/etc/System.ini");
+    Controller c=Controller("/Rational/etc/System.ini");
     processorV_t * serviceProcessorTypes=NULL;
     c.getServiceProcessors(&serviceProcessorTypes);
     std::cout << "--- ServiceProcessorList ---" << std::endl;

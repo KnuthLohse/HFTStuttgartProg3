@@ -34,3 +34,4 @@ stringV_t * ConfigurationAttribute::getValues() {
 size_t ConfigurationAttribute::getNumberOfValues() {
     return this->values.size();
 }
+

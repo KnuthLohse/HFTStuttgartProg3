@@ -10,7 +10,7 @@
 #define _PROG3_PROG3SETTINGS_H_
 
 //#define _DEBUG_
-#define _USE_HARDCODED_TASKCONFIG_
+//#define _USE_HARDCODED_TASKCONFIG_
 
 #define _USE_BOOST_REGEX_
 //#define _USE_STD_REGEX_
@@ -24,3 +24,4 @@
 #endif //_USE_STD_REGEX_
 
 #endif //_PROG3_PROG3SETTINGS_H_
+

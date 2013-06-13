@@ -7,23 +7,21 @@
 
 
 find_path( LIBBOOSTREGEX_INCLUDE_DIR boost/regex.hpp
-	PATHS "/usr/include"
-		  "/usr/local/include"
-		  "~/usr/include"
-          "~/usr/local/include"
-          "/Rational/include")
+	PATHS "/Rational/include"
+		"/usr/local/include"
+		"/usr/include"
+          )
 		
-find_library( LIBBOOSTREGEX_LIBRARY NAMES libboost_regex.a
-	PATHS "/usr/lib"
-		  "/usr/local/lib"
-		  "~/usr/lib"
-          "~/usr/local/lib"
-          "/Rational/lib")
+find_library( LIBBOOSTREGEX_LIBRARY NAMES libboost_regex.a libboost_regex-gcc.a
+	PATHS
+	"/Rational/lib"
+	"/usr/local/lib"
+	"/usr/lib")
 
 mark_as_advanced( LIBBOOSTREGEX_LIBRARY LIBBOOSTREGEX_INCLUDE_DIR )
 
 if( LIBBOOSTREGEX_INCLUDE_DIR AND EXISTS "${LIBBOOSTREGEX_INCLUDE_DIR}/boost/regex.hpp" )
-	file( STRINGS "${LIBBOOSTREGEX_INCLUDE_DIR}/mpitopoinfo.h" LIBBOOSTREGEX_H REGEX "^#define[ \t]+LIBBOOSTREGEX_VER_M[A-Z]+[ \t]+[0-9]+.*$" )
+	file( STRINGS "${LIBBOOSTREGEX_INCLUDE_DIR}/boost/regex.hpp" LIBBOOSTREGEX_H REGEX "^#define[ \t]+LIBBOOSTREGEX_VER_M[A-Z]+[ \t]+[0-9]+.*$" )
 	string( REGEX REPLACE "^.*LIBBOOSTREGEX_VER_MAJOR[ \t]+([0-9]+).*$" "\\1" LIBBOOSTREGEX_MAJOR "${BOOSTREGEX_H}" )
 	string( REGEX REPLACE "^.*LIBBOOSTREGEX_VER_MINOR[ \t]+([0-9]+).*$" "\\1" LIBBOOSTREGEX_MINOR  "${BOOSTREGEX_H}" )
 

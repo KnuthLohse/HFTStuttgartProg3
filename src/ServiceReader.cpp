@@ -14,6 +14,7 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
     //this->readFile();
     if (this->errors) {
         //Fehler beim einlesen der System.ini
+		std::cout << "Error reading System.ini:" << std::endl;
         std::cout << (*(this->errorString)).str();
         exit(-1);
     }
@@ -28,11 +29,15 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
         std::cout  << "Invalid definiton of TaskProcessors" << std::endl;
         exit(0);
     }
-    this->taskProcessors=new TaskProcessorV_t();
-    for (int i=0; i<size; i++) {
-        ConfigurationObj* tpCObj=this->getConfigurationObj((*values)[i]);
+	this->taskProcessors=new TaskProcessorV_t();
+    for (int i=0; i<size; i++) {   
+		ConfigurationObj* tpCObj=this->getConfigurationObj((*values)[i]);
         if (tpCObj==NULL) {
-            std::cout  << "Definition of TaskProcessors " << (*values)[i] << " not found" << std::endl;
+#ifdef _DEBUG_
+			std::cout << "test: \"" << (*values)[i]; 
+			std::cout << "\"" << std::endl;
+#endif
+            std::cout << "Definition of TaskProcessor: " << (*values)[i] << " not found" << std::endl;
             exit(0);
         }
         this->taskProcessors->push_back(TaskProcessor(tpCObj, this));
@@ -44,9 +49,7 @@ ServiceReader::ServiceReader(std::string path):ConfigurationReader(path) {
     std::string taskfile=(*values)[0];
 #ifdef _USE_HARDCODED_TASKCONFIG_
     taskfile="/Users/JoH/etc/TaskDescriptions.0001.ini";
-#ifdef _DEBUG_
     std::cout << "TaskIni " << (*values)[0] << " replaced with hardcoded file " << taskfile << std::endl;
-#endif /*_DEBUG_*/
 #endif /*_USE_HARDCODED_TASKCONFIG_*/
     //Open logfile
     this->logStream=(std::ofstream *) new std::ofstream();

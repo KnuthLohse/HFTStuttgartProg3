@@ -48,12 +48,13 @@ void ConfigurationReader::readFile()
     // Regex variables
     _REGEX_PREFIX_::cmatch rxSearchResults;
     bool rxSearchReturn = false;
-    _REGEX_PREFIX_::regex rxBrackets("\\[(.+)\\]");
-    _REGEX_PREFIX_::regex rxBracketsColon("\\[(.+):(.+)\\]");
-    _REGEX_PREFIX_::regex rxEqual("(.+)=(.*)");
-    _REGEX_PREFIX_::regex rxCommaSep("(.+)(,|( -> ))(.+)");
-    _REGEX_PREFIX_::regex rxWhitespace("\\s*");
-    //
+
+   _REGEX_PREFIX_::regex rxBrackets("\\s*\\[(.+)\\]\\s*");
+   _REGEX_PREFIX_::regex rxBracketsColon("\\s*\\[(\\S+):(\\S+)\\]\\s*");
+   _REGEX_PREFIX_::regex rxEqual("\\s*(\\S+)=(.*?)\\s*");
+   _REGEX_PREFIX_::regex rxCommaSep("\\s*(.+)(,|( -> ))(.+)");
+   _REGEX_PREFIX_::regex rxWhitespace("\\s*");
+ 
     string result;
     
     ConfigurationObj *lastObj=NULL; //=new ConfigurationObj("root");
@@ -62,13 +63,19 @@ void ConfigurationReader::readFile()
     stringV_t toDelete=stringV_t(); //Objects to delete when finished reading
     while(std::getline(fileHandler, line))
     {
+	#ifdef _DEBUG_
+		std::cout << "parsing line: " << line << std::endl;
+	#endif
         bool lineDone=0;
-        rxSearchReturn = _REGEX_PREFIX_::regex_search(line.c_str(), rxSearchResults, rxBracketsColon);
+        rxSearchReturn = _REGEX_PREFIX_::regex_match(line.c_str(), rxSearchResults, rxBracketsColon);
         if(rxSearchReturn && !lineDone)
         {
             //object with parent
             string name = rxSearchResults[1];
             string parent = rxSearchResults[2];
+#ifdef _DEBUG_
+			std::cout << "Parsed new Object: " << name << " as child of " << parent <<std::endl; 
+#endif
             ConfigurationObj * parentObj=this->getConfigurationObj(parent);
             if (parentObj==NULL) {
                 (*(this->errorString)) << "Configurationobject " << parent << " not defined, but expected by " << name <<std::endl;
@@ -95,15 +102,24 @@ void ConfigurationReader::readFile()
                     confObjects.insert(std::make_pair(name, lastObj));
                     ignoreAttributes=false;
                 }
+#ifdef _DEBUG_
+				ConfigurationObj* tpCObj=this->getConfigurationObj(name);
+				if (tpCObj==NULL) {
+					std::cout << "Insertion of new Object Failes" << std::endl;
+				}
+#endif
             }
             lineDone=1;
         }
         
-        rxSearchReturn = _REGEX_PREFIX_::regex_search(line.c_str(), rxSearchResults, rxBrackets);
+        rxSearchReturn = _REGEX_PREFIX_::regex_match(line.c_str(), rxSearchResults, rxBrackets);
         if(rxSearchReturn && !lineDone)
         {
             //object without parent;
             string name = rxSearchResults[1];
+#ifdef _DEBUG_
+			std::cout << "Parsed new Object: " << name <<std::endl; 
+#endif
             if (this->getConfigurationObj(name)!=NULL) {
                 *(this->errorString) << "Double Definition of Object " << name << " in " << this->mPath << ". Ignoring this Object" << std::endl;
                 this->errors++;
@@ -117,7 +133,7 @@ void ConfigurationReader::readFile()
             lineDone=1;
         }
         
-        rxSearchReturn = _REGEX_PREFIX_::regex_search(line.c_str(), rxSearchResults, rxEqual);
+        rxSearchReturn = _REGEX_PREFIX_::regex_match(line.c_str(), rxSearchResults, rxEqual);
         if(rxSearchReturn && !lineDone)
         {
             if (lastObj==NULL) {
@@ -132,13 +148,25 @@ void ConfigurationReader::readFile()
                 string aName = rxSearchResults[1];
                 string aValues=rxSearchResults[2];
                 lastObj->addAttribute(aName);
-                while (_REGEX_PREFIX_::regex_match(aValues.c_str(), rxSearchResults, rxCommaSep)) {
+#ifdef _DEBUG_
+				std::cout << "Parsed new Attribute: " << aName << std::endl; 
+#endif
+
+                while (_REGEX_PREFIX_::regex_search(aValues.c_str(), rxSearchResults, rxCommaSep)) {
                 
                     string value=rxSearchResults[4];
                     aValues=rxSearchResults[1];
                     lastObj->addAttributeValue(aName, value);
-                }
+#ifdef _DEBUG_
+					std::cout << "Parsed new AttributeValue: " << value << std::endl; 
+#endif
+
+					}
                 if (aValues.length()) {
+#ifdef _DEBUG_
+			std::cout << "Parsed new AttributeValue(last): " << aValues << std::endl; 
+#endif
+
                     lastObj->addAttributeValue(aName, aValues);
                 }
             }

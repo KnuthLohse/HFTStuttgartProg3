@@ -77,3 +77,4 @@ private:
     attrMap_t confAttributes; ///Map that contains the attributes. Key is the name of the Attribute
 };
 #endif /* defined(__Prog3__ConfigurationObj__) */
+

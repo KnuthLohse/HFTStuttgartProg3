@@ -25,11 +25,14 @@ Task::Task(ConfigurationObj *conf, TaskDescriptionReader * tReader): Configurati
     stringV_t * stepstrings=NULL;
     this->position=0;
     this->getValues("Steps", &stepstrings);
-    _REGEX_PREFIX_::regex rxAndSep("(.+) & (.+)");
+    _REGEX_PREFIX_::regex rxAndSep("\\s*(.+) & (.+)\\s*");
     _REGEX_PREFIX_::cmatch rxSearchResults;
     //TODO Check for 0 -> and -> X
     for (int i=1; i<(stepstrings->size()-1); i++) { // step over O and X
         this->requests.push_back(sRequestV_t());
+#ifdef _DEBUG_
+		std::cout << "Trying to find parallel ServiceRequests" << std::endl;
+#endif
         while (_REGEX_PREFIX_::regex_match((*stepstrings)[i].c_str(), rxSearchResults, rxAndSep)) {
                 
             std::string name=rxSearchResults[2];

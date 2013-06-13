@@ -5,6 +5,7 @@
 #include <vector>
 #include <time.h>
 #include "TaskStartException.h"
+#include "Prog3Settings.h"
 
 
 Controller::Controller(std::string filename) {
