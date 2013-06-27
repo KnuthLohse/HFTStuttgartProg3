@@ -15,6 +15,9 @@
 #define _USE_BOOST_REGEX_
 //#define _USE_STD_REGEX_
 
+//#define __SUSE__
+
+
 #ifdef _USE_BOOST_REGEX_
     #define _REGEX_PREFIX_ boost
 #endif //_USE_BOOST_REGEX_

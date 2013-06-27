@@ -48,13 +48,21 @@ void ConfigurationReader::readFile()
     // Regex variables
     _REGEX_PREFIX_::cmatch rxSearchResults;
     bool rxSearchReturn = false;
-
+#ifdef __SUSE__
    _REGEX_PREFIX_::regex rxBrackets("\\s*\\[(.+)\\]\\s*");
    _REGEX_PREFIX_::regex rxBracketsColon("\\s*\\[(\\S+):(\\S+)\\]\\s*");
    _REGEX_PREFIX_::regex rxEqual("\\s*(\\S+)=(.*?)\\s*");
    _REGEX_PREFIX_::regex rxCommaSep("\\s*(.+)(,|( -> ))(.+)");
    _REGEX_PREFIX_::regex rxWhitespace("\\s*");
- 
+#else
+    _REGEX_PREFIX_::regex rxBrackets("\\[(.+)\\]");
+    _REGEX_PREFIX_::regex rxBracketsColon("\\[(.+):(.+)\\]");
+    _REGEX_PREFIX_::regex rxEqual("(.+)=(.*)");
+    _REGEX_PREFIX_::regex rxCommaSep("(.+)(,|( -> ))(.+)");
+    _REGEX_PREFIX_::regex rxWhitespace("\\s*");
+    //
+#endif
+    
     string result;
     
     ConfigurationObj *lastObj=NULL; //=new ConfigurationObj("root");
